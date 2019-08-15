@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "rtv1.h": "c",
+        "pthread.h": "c",
+        "chrono": "c",
+        "__locale": "c",
+        "sdl.h": "c",
+        "get_next_line.h": "c",
+        "libft.h": "c",
+        "fcntl.h": "c",
+        "stat.h": "c",
+        "stdlib.h": "c",
+        "types.h": "c",
+        "math.h": "c",
+        "cmath": "c"
+    }
+}
