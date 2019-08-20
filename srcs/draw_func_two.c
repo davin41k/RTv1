@@ -35,7 +35,7 @@ void            init_sdl(t_graph *sdl)
     sdl->pixels2 = sdl->surface_window->pixels;
 }
 
-static void        set_pixel(t_rtv *img, int x, int y, int color)
+static void        set_pixel(t_graph *img, int x, int y, int color)
 {
     int    tmpx;
     int    tmpy;
