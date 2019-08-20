@@ -54,6 +54,7 @@ dkms.conf
 # Mac crap
 .DS_Store
 Servers
+DS_Store
 
 # Build results
 [Dd]ebug/

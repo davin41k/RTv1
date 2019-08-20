@@ -90,7 +90,8 @@ SRC		:=	ft_strlen.c\
 			ft_lstgetlast.c\
 			ft_getnbr.c\
 			\
-			get_next_line.c
+			get_next_line.c\
+			clean_text.c
 
 OBJ		:= $(SRC:.c=.o)	
 
