@@ -107,7 +107,7 @@ typedef	struct		s_light
 	t_vec_d			pos;
 	t_vec_d			dir;
 	t_light			*next;
-};
+}					t_light;
 
 typedef	struct		s_rtv
 {
@@ -136,8 +136,8 @@ void	init_sdl(t_graph *sdl);
 void	set_pixel(t_graph *img, int x, int y, int color);
 t_vec_d	CanvasToViewport(int x, int y);
 t_vec_d	IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
-int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_sphere *sphere);
-void	cycle(t_graph *sdl, t_sphere *ob);
+int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv);
+void	cycle(t_rtv *rtv);
 void	t_events(t_graph *sdl);
 int		main(int ac, char **av);
 
@@ -145,5 +145,11 @@ int		main(int ac, char **av);
 double	ComputeLighting(t_light *light, t_vec_d P, t_vec_d N, t_vec_d D);
 t_vec_d	multiplay(double k, t_vec_d vec);
 double length(t_vec_d vec);
+
+//	***FIGURE_FACTORY***
+t_light		*get_light(int type, double intensity, t_vec_d pos, t_vec_d dir);
+t_light		*get_lights(void);
+t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color);
+t_sphere	*get_spheres(void);
 
 #endif

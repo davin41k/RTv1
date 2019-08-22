@@ -148,26 +148,18 @@ void	ft_events(t_graph *sdl)
 	exit(0);
 }
 
-t_light		*get_lights(void)
-{
-	t_light		light3;
-	t_light		light2;
-	t_light		light1 = { AMBIENT, 0.2, (t_vec_d){0, 0, 3}, (t_vec_d){0, 0, 3}, &light2};
-	t_light		light2 = { AMBIENT, 0.2, (t_vec_d){0, 0, 3}, (t_vec_d){0, 0, 3}, &light3};
-	t_light		light3 = { AMBIENT, 0.2, (t_vec_d){0, 0, 3}, (t_vec_d){0, 0, 3}, NULL};
-	return (&light1);
-}
-
 int		main(int ac, char **av)
 {
 	t_graph sdl;
 	t_sphere *st;
 	t_rtv	rtv;
 
-	rtv.lights = get_lights();
-
 	st = (t_sphere*)malloc(sizeof(t_sphere));
 	init_sdl(&sdl);
+
+	rtv.lights = get_lights();
+	rtv.spheres = st;
+
 	st->center = (t_vec_d){0, 0, 3};
 	st->radius = 1;
 	st->color = (t_vec_d){150, 150, 1};
