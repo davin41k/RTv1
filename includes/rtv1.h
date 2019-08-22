@@ -42,6 +42,10 @@
 # define W				1000
 # define H				1000
 
+# define AMBIENT		0
+# define POINT			1
+# define DIRECTIONAL	2
+
 # include <mlx.h>
 # include <math.h>
 # include <sys/types.h>
@@ -51,15 +55,18 @@
 # include <stdio.h>
 # include <pthread.h>
 # include <unistd.h>
+# include <float.h>
 // # include "libft.h"
 // # include "get_next_line.h"
+//DBL_MAX
 # include "SDL.h"
 
 
 typedef	double	t_vec_d	__attribute__((__ext_vector_type__(3)));
 typedef	int		t_vec_i	__attribute__((__ext_vector_type__(3)));
 
-typedef	struct		s_sphere t_sphere;
+typedef	struct		s_sphere	t_sphere;
+typedef	struct		s_light		t_light;
 typedef	struct		s_point 
 {
 	int				x;
@@ -88,10 +95,19 @@ struct				s_sphere
 
 typedef	struct		s_scene
 {
-	t_vec_d			cam_pos;
-	t_vec_d			cam_dir;
+	t_vec_d			O;
+	t_vec_d			D;
 	t_vec_d			cam_ray;
 }					t_scene;
+
+typedef	struct		s_light
+{
+	int				type;
+	double			intensity;
+	t_vec_d			pos;
+	t_vec_d			dir;
+	t_light			*next;
+};
 
 typedef	struct		s_rtv
 {
@@ -101,6 +117,7 @@ typedef	struct		s_rtv
 	t_scene			scene;
 	char			*map_file_name;
 	t_graph			*graph;
+	t_light			*lights;
 }					t_rtv;
 
 //	***EXITS_FUNC***
@@ -112,5 +129,21 @@ void	error_exit(int errno);
 //	***INIT_FUNCTIONS***
 void    sdl_init(t_rtv *rtv, t_graph *graph);
 int		rtv_init(t_rtv *rtv, char *map_file_name);
+
+//	***DRAW_FUNC_TWO***
+double	dot(t_vec_d v1, t_vec_d v2);
+void	init_sdl(t_graph *sdl);
+void	set_pixel(t_graph *img, int x, int y, int color);
+t_vec_d	CanvasToViewport(int x, int y);
+t_vec_d	IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
+int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_sphere *sphere);
+void	cycle(t_graph *sdl, t_sphere *ob);
+void	t_events(t_graph *sdl);
+int		main(int ac, char **av);
+
+//	***LUGHTNING***
+double	ComputeLighting(t_light *light, t_vec_d P, t_vec_d N, t_vec_d D);
+t_vec_d	multiplay(double k, t_vec_d vec);
+double length(t_vec_d vec);
 
 #endif
