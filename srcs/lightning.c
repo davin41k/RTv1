@@ -24,18 +24,21 @@ double	ComputeLighting(t_light *light, t_vec_d P, t_vec_d N, t_vec_d D)
 	double n_dot_l;
 	double	len_normal = length(N);
 
-	//for
-	if (light->type == AMBIENT)
-		i+= light->intensity;
-	else
+	while (light)
 	{
-		if (light->type == POINT)
-			L = light->pos - P;
+		if (light->type == AMBIENT)
+			i+= light->intensity;
 		else
-			L = light->dir;
-		n_dot_l = dot(N, L);
-		if (n_dot_l > 0)
-			i += light->intensity * n_dot_l / (len_normal * length(L));
+		{
+			if (light->type == POINT)
+				L = light->pos - P;
+			else
+				L = light->dir;
+			n_dot_l = dot(N, L);
+			if (n_dot_l > 0)
+				i += light->intensity * n_dot_l / (len_normal * length(L));
+		}
+		light = light->next;
 	}
 	return (i);
 }

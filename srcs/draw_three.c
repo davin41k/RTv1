@@ -86,9 +86,9 @@ int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv)
 {
 	double closest_t = 999999999;
 	t_sphere *closest_sphere = NULL;
-	t_light		light = rtv->lights[1];
-	light.pos = (t_vec_d){2, 1, 0};
-	light.dir = (t_vec_d){1, 4, 4};
+	t_light		*light = rtv->lights;
+	// light.pos = (t_vec_d){2, 1, 0};
+	// light.dir = (t_vec_d){1, 4, 4};
 	t_sphere	*head = rtv->spheres;
 	while (head)
 	{
@@ -107,14 +107,14 @@ int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv)
 		head = head->next;
 	}
 	if (closest_sphere == NULL)
-		return (0x000000);
+		return (0xFFCACB);
 
 	t_vec_d point = O + multiplay(closest_t, D);
 	t_vec_d	normal = point - closest_sphere->center;
 	normal = multiplay( 1.0 / length(normal), normal);
 //	int color = ((int)(closest_sphere->color.x) << 16) | ((int)(closest_sphere->color.y) << 8
 //| (int)(closest_sphere->color.z));
-	t_vec_d color = multiplay(ComputeLighting(&light, point, normal, D), closest_sphere->color);
+	t_vec_d color = multiplay(ComputeLighting(light, point, normal, D), closest_sphere->color);
 	
 	int i = ((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z));
 	//printf("Color:\t%d\n", i);
@@ -147,7 +147,10 @@ void	ft_events(t_graph *sdl)
 
 	if (SDL_PollEvent(&sdl->event) && (sdl->event.type == SDL_QUIT ||
 		sdl->event.key.keysym.sym == SDLK_ESCAPE))
-	exit(0);
+		{
+			SDL_Quit();
+			exit(0);
+		}
 }
 
 int		main(int ac, char **av)
