@@ -90,6 +90,7 @@ struct				s_sphere
 	t_vec_d			center;
 	double			radius;
 	t_vec_d			color;
+	int				specular;
 	t_sphere		*next;
 };		
 
@@ -142,14 +143,15 @@ void	t_events(t_graph *sdl);
 int		main(int ac, char **av);
 
 //	***LUGHTNING***
-double	ComputeLighting(t_light *light, t_vec_d P, t_vec_d N, t_vec_d D);
+double	ComputeLighting(t_rtv *rtv, t_vec_d P, t_vec_d N, t_vec_d D, int spec);
 t_vec_d	multiplay(double k, t_vec_d vec);
 double length(t_vec_d vec);
+void	check_correct_chanels(t_vec_d *color);
 
 //	***FIGURE_FACTORY***
 t_light		*get_light(int type, double intensity, t_vec_d pos, t_vec_d dir);
 t_light		*get_lights(void);
-t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color);
+t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
 t_sphere	*get_spheres(void);
 
 #endif

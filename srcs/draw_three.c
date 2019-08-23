@@ -87,9 +87,8 @@ int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv)
 	double closest_t = 999999999;
 	t_sphere *closest_sphere = NULL;
 	t_light		*light = rtv->lights;
-	// light.pos = (t_vec_d){2, 1, 0};
-	// light.dir = (t_vec_d){1, 4, 4};
 	t_sphere	*head = rtv->spheres;
+
 	while (head)
 	{
 		t_vec_d t  = IntersectRaySphere(O, D, head);
@@ -107,17 +106,18 @@ int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv)
 		head = head->next;
 	}
 	if (closest_sphere == NULL)
-		return (0xFFCACB);
+		return (0xFFCACB); //easy pink
 
 	t_vec_d point = O + multiplay(closest_t, D);
 	t_vec_d	normal = point - closest_sphere->center;
 	normal = multiplay( 1.0 / length(normal), normal);
-//	int color = ((int)(closest_sphere->color.x) << 16) | ((int)(closest_sphere->color.y) << 8
-//| (int)(closest_sphere->color.z));
-	t_vec_d color = multiplay(ComputeLighting(light, point, normal, D), closest_sphere->color);
 	
-	int i = ((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z));
-	//printf("Color:\t%d\n", i);
+	t_vec_d view = -1 * D;
+	//printf("%f\t%f\t%f\n", view.x, view.y, view.z);
+	
+	t_vec_d color = ComputeLighting(rtv, point, normal, -D, closest_sphere->specular) * closest_sphere->color;
+	//int i = ((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z));
+	check_correct_chanels(&color);
 	return (((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z)));
 	// return (color);
 }
@@ -128,12 +128,13 @@ void	cycle(t_rtv *rtv)
 	int y;
 	int x;
 
-	x = -W / 2;
+	x = -W / 2 - 1;													// - 1
 	t_vec_d O = (t_vec_d){0, 0, 0};
-	while (x++ < W / 2)
+
+	while (x++ < W / 2 - 1)
 	{
-		y = -H / 2;
-		while (y++ < H / 2)
+		y = -H / 2;											// поставил -1
+		while (y++ < H / 2 - 1)
 		{
 			t_vec_d d = CanvasToViewport(x, y);
 			int color = TraceRay(O, d, 1, 999999999, rtv);

@@ -40,7 +40,7 @@ t_light		*get_lights(void)
 	return (light1);
 }
 
-t_sphere		*create_sphere(t_vec_d center, double radius, t_vec_d color)
+t_sphere		*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec)
 {
 	t_sphere	*sphere;
 
@@ -48,6 +48,7 @@ t_sphere		*create_sphere(t_vec_d center, double radius, t_vec_d color)
 	sphere->center = center;
 	sphere->radius = radius;
 	sphere->color = color;
+	sphere->specular = spec;
 	sphere->next = NULL;
 	return (sphere);
 }
@@ -59,10 +60,10 @@ t_sphere		*get_spheres(void)
 	t_sphere	*s3;
 	t_sphere	*s4;
 
-	s1 = create_sphere((t_vec_d){-1, 0, 4}, 0.5, (t_vec_d){150, 150, 1}); //желтая
-	s2 = create_sphere((t_vec_d){1, 0, 4}, 1, (t_vec_d){30, 150, 30}); //зеленая
-	s3 = create_sphere((t_vec_d){0, 0, 7}, 1, (t_vec_d){200, 200, 200}); // белая
-	s4 = create_sphere((t_vec_d){0, -5001, 7}, 5000, (t_vec_d){255, 255, 0});
+	s1 = create_sphere((t_vec_d){-1, 0, 4}, 0.5, (t_vec_d){150, 150, 1}, 500); //желтая
+	s2 = create_sphere((t_vec_d){1.5, 0, 4}, 1, (t_vec_d){30, 150, 30}, 190); //зеленая
+	s3 = create_sphere((t_vec_d){0, 0, 7}, 1, (t_vec_d){200, 200, 200}, 500); // белая
+	s4 = create_sphere((t_vec_d){0, -5001, 7}, 5000, (t_vec_d){255, 255, 0}, 1);
 
 	s1->next = s2;
 	s2->next = s3;
