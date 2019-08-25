@@ -17,34 +17,41 @@ double length(t_vec_d vec)
  	return(sqrt(dot(vec, vec)));
 }
 
-double	ComputeLighting(t_rtv *rtv, t_vec_d P, t_vec_d N, t_vec_d D, int spec)
+double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
 {
 	t_light *light= rtv->lights;
 	double 	i = 0.0;
-	t_vec_d	L = light->pos - D;
+	t_vec_d	L = light->pos - rtv->calc.D;
 	double n_dot_l;
 	
-	double	len_normal = length(N);
+	double	len_normal = length(rtv->calc.N);
 	while (light)
 	{
 		if (light->type == AMBIENT)
 			i+= light->intensity;
 		else
 		{
+			// ClosestIntersection(0.0001, 99999999, rtv);
+			// if (rtv->calc.clost_spher != NULL)
+			// {
+			// 	light = light->next;
+			// 	continue ;
+			// }
 			if (light->type == POINT)
+			
 				L = light->pos - P;
 			else
 				L = light->dir;
-			n_dot_l = dot(N, L);
+			n_dot_l = dot(rtv->calc.N, L);
 			if (n_dot_l > 0)
 				i += light->intensity * n_dot_l / (len_normal * length(L));
-			if (spec != -1)
+			if (spec != -1) //зеркальность
 			{
-				t_vec_d vec_r = 2.0 * dot(N, L) * N - L;
-				double r_dot_v = dot(vec_r, D);
+				t_vec_d vec_r = 2.0 * dot(rtv->calc.N, L) * rtv->calc.N - L;
+				double r_dot_v = dot(vec_r, rtv->calc.D);
 				if (r_dot_v > 0) {
 					//printf("AFTER POW %f, \n", pow(r_dot_v / (length(vec_r) * length(D)), spec));
-					i +=light->intensity * pow(r_dot_v / (length(vec_r) * length(D)), spec); }
+					i +=light->intensity * pow(r_dot_v / (length(vec_r) * length(rtv->calc.D)), spec); }
 				//printf("%f, i\n");
 			}
 		}

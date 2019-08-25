@@ -82,44 +82,28 @@ t_vec_d		IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere)
 	return (t);
 }
 
-int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv)
+int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
 {
-	double closest_t = 999999999;
 	t_sphere *closest_sphere = NULL;
 	t_light		*light = rtv->lights;
 	t_sphere	*head = rtv->spheres;
 
-	while (head)
-	{
-		t_vec_d t  = IntersectRaySphere(O, D, head);
-		if (t.x >= t_min && t.x <= t_max && t.x < closest_t)
-		{
-			closest_t = t.x;
-			closest_sphere = head;
-		}
-		//printf("HELLO\n");
-		if (t.y >= t_min && t.y <= t_max && t.y < closest_t)
-		{
-			closest_t = t.y;
-			closest_sphere = head;
-		}
-		head = head->next;
-	}
-	if (closest_sphere == NULL)
+	calc_init(O, D, &(rtv->calc));
+	ClosestIntersection(t_min, t_max, rtv);
+	if (rtv->calc.clost_spher == NULL)
 		return (0xFFCACB); //easy pink
 
-	t_vec_d point = O + multiplay(closest_t, D);
-	t_vec_d	normal = point - closest_sphere->center;
+	t_vec_d point = O + multiplay(rtv->calc.clost_t, D);
+	t_vec_d	normal = point - rtv->calc.clost_spher->center;
 	normal = multiplay( 1.0 / length(normal), normal);
 	
 	t_vec_d view = -1 * D;
-	//printf("%f\t%f\t%f\n", view.x, view.y, view.z);
-	
-	t_vec_d color = ComputeLighting(rtv, point, normal, -D, closest_sphere->specular) * closest_sphere->color;
-	//int i = ((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z));
+	rtv->calc.point = point;
+	rtv->calc.N = normal;
+	rtv->calc.D *= -1;
+	t_vec_d color = ComputeLighting(rtv, point, rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
 	check_correct_chanels(&color);
 	return (((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z)));
-	// return (color);
 }
 
 void	cycle(t_rtv *rtv)
@@ -133,7 +117,7 @@ void	cycle(t_rtv *rtv)
 
 	while (x++ < W / 2 - 1)
 	{
-		y = -H / 2;											// поставил -1
+		y = -H / 2 - 1;											// поставил -1
 		while (y++ < H / 2 - 1)
 		{
 			t_vec_d d = CanvasToViewport(x, y);

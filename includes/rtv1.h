@@ -110,11 +110,27 @@ typedef	struct		s_light
 	t_light			*next;
 }					t_light;
 
+typedef	struct		s_calc
+{
+	t_vec_d			O;
+	t_vec_d			D;
+	t_vec_d			L;
+	t_vec_d			N;
+	double			t_min;
+	double			t_max;
+	double			clost_t;
+	t_sphere		*clost_spher;
+	t_vec_d			point;
+	t_vec_d			normal;
+	t_vec_d			view;
+}					t_calc;
+
 typedef	struct		s_rtv
 {
 	int				scr_h;
 	int				scr_w;
 	t_sphere		*spheres;
+	t_calc			calc;
 	t_scene			scene;
 	char			*map_file_name;
 	t_graph			*graph;
@@ -137,13 +153,13 @@ void	init_sdl(t_graph *sdl);
 void	set_pixel(t_graph *img, int x, int y, int color);
 t_vec_d	CanvasToViewport(int x, int y);
 t_vec_d	IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
-int		TraceRay(t_vec_d O, t_vec_d D, int t_min, double t_max, t_rtv *rtv);
+int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv);
 void	cycle(t_rtv *rtv);
 void	t_events(t_graph *sdl);
 int		main(int ac, char **av);
 
 //	***LUGHTNING***
-double	ComputeLighting(t_rtv *rtv, t_vec_d P, t_vec_d N, t_vec_d D, int spec);
+double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec);
 t_vec_d	multiplay(double k, t_vec_d vec);
 double length(t_vec_d vec);
 void	check_correct_chanels(t_vec_d *color);
@@ -153,5 +169,9 @@ t_light		*get_light(int type, double intensity, t_vec_d pos, t_vec_d dir);
 t_light		*get_lights(void);
 t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
 t_sphere	*get_spheres(void);
+
+//	***MORE_DRAW_FUNC***
+int			ClosestIntersection(double t_min, double t_max, t_rtv *rtv);
+void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc);
 
 #endif
