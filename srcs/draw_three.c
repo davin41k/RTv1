@@ -89,7 +89,7 @@ int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
 	t_sphere	*head = rtv->spheres;
 
 	calc_init(O, D, &(rtv->calc));
-	ClosestIntersection(t_min, t_max, rtv);
+	ClosestIntersection(O, D, t_min, t_max, &(rtv->calc), rtv);
 	if (rtv->calc.clost_spher == NULL)
 		return (0xFFCACB); //easy pink
 

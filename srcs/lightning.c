@@ -21,7 +21,7 @@ double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
 {
 	t_light *light= rtv->lights;
 	double 	i = 0.0;
-	t_vec_d	L = light->pos - rtv->calc.D;
+	t_vec_d	L;
 	double n_dot_l;
 	
 	double	len_normal = length(rtv->calc.N);
@@ -31,17 +31,20 @@ double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
 			i+= light->intensity;
 		else
 		{
-			// ClosestIntersection(0.0001, 99999999, rtv);
-			// if (rtv->calc.clost_spher != NULL)
-			// {
-			// 	light = light->next;
-			// 	continue ;
-			// }
-			if (light->type == POINT)
 			
+
+			if (light->type == POINT)
 				L = light->pos - P;
 			else
 				L = light->dir;
+			t_calc calc = rtv->calc;
+			ClosestIntersection(P, L, 0.01, 99999999, &calc, rtv);						//seg
+			//printf("HELLO\n");
+			if (calc.clost_spher != NULL)
+			{
+				light = light->next;
+				continue ;
+			}
 			n_dot_l = dot(rtv->calc.N, L);
 			if (n_dot_l > 0)
 				i += light->intensity * n_dot_l / (len_normal * length(L));

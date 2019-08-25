@@ -171,7 +171,7 @@ t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
 t_sphere	*get_spheres(void);
 
 //	***MORE_DRAW_FUNC***
-int			ClosestIntersection(double t_min, double t_max, t_rtv *rtv);
+int			ClosestIntersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv);
 void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc);
 
 #endif
