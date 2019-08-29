@@ -95,10 +95,12 @@ int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
 
 	t_vec_d point = O + multiplay(rtv->calc.clost_t, D);
 	t_vec_d	normal = point - rtv->calc.clost_spher->center;
-	normal = multiplay( 1.0 / length(normal), normal);
+	// normal = multiplay( 1.0 / length(normal), normal);
+	rtv->calc.point = point;
+
+	normal = calc_normal(rtv, rtv->calc.clost_spher->obj_type);
 	
 	t_vec_d view = -1 * D;
-	rtv->calc.point = point;
 	rtv->calc.N = normal;
 	rtv->calc.D *= -1;
 	t_vec_d color = ComputeLighting(rtv, point, rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
@@ -155,14 +157,11 @@ int		main(int ac, char **av)
 	rtv.spheres = get_spheres();;
 	rtv.graph = &sdl;
 	
-	st->center = (t_vec_d){0, 0, 3};
-	st->radius = 1;
-	st->color = (t_vec_d){150, 150, 1};
+	cycle(&rtv);
 	while (1)
-	{
-		cycle(&rtv);
+	{	
 		ft_events(&sdl);
-		SDL_Delay(10);
+		//SDL_Delay(1000);
 		SDL_UpdateWindowSurface(sdl.win);
 	}
 	return (0);

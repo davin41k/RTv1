@@ -46,6 +46,11 @@
 # define POINT			1
 # define DIRECTIONAL	2
 
+# define PLANE			0
+# define SPHERE			1
+# define CONE			2
+# define CYLINDER		3
+
 # include <mlx.h>
 # include <math.h>
 # include <sys/types.h>
@@ -87,10 +92,13 @@ typedef	struct		s_graph
 
 struct				s_sphere
 {
+	int				obj_type;
 	t_vec_d			center;
 	double			radius;
 	t_vec_d			color;
+	t_vec_d			rotation;
 	int				specular;
+	double			fig_angle;
 	t_sphere		*next;
 };		
 
@@ -173,5 +181,10 @@ t_sphere	*get_spheres(void);
 //	***MORE_DRAW_FUNC***
 int			ClosestIntersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv);
 void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc);
+t_vec_d		intersec_object(t_vec_d O, t_vec_d D, t_sphere *obj);
+t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane);
+t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone);
+t_vec_d		calc_normal(t_rtv *rtv, int fig_type);
+t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone);
 
 #endif

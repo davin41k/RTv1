@@ -38,7 +38,7 @@ double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
 			else
 				L = light->dir;
 			t_calc calc = rtv->calc;
-			ClosestIntersection(P, L, 0.01, 99999999, &calc, rtv);						//seg
+			ClosestIntersection(P, L, 0.0001, 99999999, &calc, rtv);						//seg
 			//printf("HELLO\n");
 			if (calc.clost_spher != NULL)
 			{
