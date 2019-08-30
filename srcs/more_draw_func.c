@@ -59,7 +59,7 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 
 		normal = (dot(rtv->calc.D, rtv->calc.clost_spher->rotation) < 0.0 ?
 		-rtv->calc.clost_spher->rotation : rtv->calc.clost_spher->rotation);
-	else if (fig_type == CYLINDER)
+	else if (fig_type == CYLINDER || fig_type == CONE)
 	{
 		normal = 1.0 / length(rtv->calc.clost_spher->rotation) * rtv->calc.clost_spher->rotation;
 		double tmp = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.O - rtv->calc.clost_spher->center), normal);
@@ -71,10 +71,6 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 		// tmp = dot(rtv->calc.D, rtv->calc.clost_spher->rotation) * rtv->calc.L
 		// + dot((rtv->calc.O - rtv->calc.clost_spher->center), rtv->calc.clost_spher->rotation);
 		// normal = rtv->calc.clost_spher->rotation / sqrt(dot(rtv->calc.clost_spher->rotation, rtv->calc.clost_spher->rotation));
-	}
-	else if (fig_type == CONE)
-	{
-		
 	}
 	return (normal);
 }
@@ -185,13 +181,6 @@ t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone)
 
 	return (t);
 }
-
-// t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone)
-// {
-	
-// }
-
-
 
 void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc)
 {

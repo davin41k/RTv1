@@ -69,8 +69,8 @@ t_sphere		*get_spheres(void)
 	p1 = create_sphere((t_vec_d){1, 0, 10}, 1, (t_vec_d){10, 200, 200}, 1000);
 
 	p1->obj_type = CONE;
-	p1->rotation = (t_vec_d){1, 2, 0};
-	p1->fig_angle = 60;
+	p1->rotation = (t_vec_d){1, 10, 0};
+	p1->fig_angle = 0.4;
 	
 	p1->rotation = (t_vec_d){2, 1, 0};
 	//p1->rotation =  1.0 / lngth(p1->rotation) * p1->rotation;
