@@ -33,7 +33,7 @@ int		rtv_init(t_rtv *rtv, char *map_file_name)
 {
 	rtv->scr_w = WIN_HD_WIDTH;
 	rtv->scr_h = WIN_HD_HEIGHT;
-	rtv->map_file_name = map_file_name;
+	rtv->scenes_file = map_file_name;
 	if (!(rtv->graph = (t_graph*)malloc(sizeof(t_graph))))
 		error_exit(MEM_ERR);
 	return (1);

@@ -42,14 +42,25 @@
 # define W				1000
 # define H				1000
 
-# define AMBIENT		0
-# define POINT			1
-# define DIRECTIONAL	2
+# define AMBIENT		4
+# define POINT			5
+# define DIRECTIONAL	6
+
+# define CAMERA			7
 
 # define PLANE			0
 # define SPHERE			1
 # define CONE			2
 # define CYLINDER		3
+
+# define FIGURE			0
+# define LIGHT			1
+
+# define NO_NUMBER		-1
+
+# define EMPTY_LINE		0
+
+# define MAP_FORMAT		"rtv1"
 
 # include <mlx.h>
 # include <math.h>
@@ -61,8 +72,8 @@
 # include <pthread.h>
 # include <unistd.h>
 # include <float.h>
-// # include "libft.h"
-// # include "get_next_line.h"
+# include "libft.h"
+# include "get_next_line.h"
 //DBL_MAX
 # include "SDL.h"
 
@@ -72,6 +83,7 @@ typedef	int		t_vec_i	__attribute__((__ext_vector_type__(3)));
 
 typedef	struct		s_sphere	t_sphere;
 typedef	struct		s_light		t_light;
+
 typedef	struct		s_point 
 {
 	int				x;
@@ -140,7 +152,7 @@ typedef	struct		s_rtv
 	t_sphere		*spheres;
 	t_calc			calc;
 	t_scene			scene;
-	char			*map_file_name;
+	char			*scenes_file;
 	t_graph			*graph;
 	t_light			*lights;
 }					t_rtv;
@@ -153,7 +165,7 @@ void	error_exit(int errno);
 
 //	***INIT_FUNCTIONS***
 void    sdl_init(t_rtv *rtv, t_graph *graph);
-int		rtv_init(t_rtv *rtv, char *map_file_name);
+int		rtv_init(t_rtv *rtv, char *scenes_file);
 
 //	***DRAW_FUNC_TWO***
 double	dot(t_vec_d v1, t_vec_d v2);
@@ -186,5 +198,31 @@ t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane);
 t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone);
 t_vec_d		calc_normal(t_rtv *rtv, int fig_type);
 t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone);
+
+//	***SCENE_READER***
+int			read_scene(t_rtv *rtv);
+t_sphere	*get_sphere(char *obj);
+int			get_obj_type(char *object);
+t_vec_d		get_next_vec(char **fig);
+double		get_next_num(char **fig);
+t_light		*create_light(char *obj);
+int			check_map_format(char *file_name);
+int			get_object(char *object, t_rtv *rtv);
+void		nullify_object(t_sphere *obj);
+void		nullify_light(t_light *light);
+t_vec_d		get_next_vec(char **fig);
+double		get_next_num(char **fig);
+int			get_abstract_obj_type(char *obj);
+int			shift_obj_type(char **fig);
+t_vec_d		get_cam_pos(char *obj);
+
+//	***HELP_FUNC***
+void	print_object(t_sphere *sphere);
+void	print_state(char *state, double value);
+void	print_vec(char *state, t_vec_d vec);
+void	print_light(t_light *light);
+void	print_all_objects(t_rtv *rtv);
+//to libf
+double		ft_atof(char *nptr);
 
 #endif

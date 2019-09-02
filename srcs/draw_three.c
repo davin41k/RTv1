@@ -142,21 +142,45 @@ void	ft_events(t_graph *sdl)
 
 int		main(int ac, char **av)
 {
-	t_graph sdl;
-	t_sphere *st;
-	t_sphere *st2;
-	t_sphere *st3;
-	t_rtv	rtv;
+	t_graph		sdl;
+	t_sphere	*st;
+	t_sphere	*st2;
+	t_sphere	*st3;
+	t_light		*light;
+	t_rtv		rtv;
 
 	st = (t_sphere*)malloc(sizeof(t_sphere));
 	st2 = (t_sphere*)malloc(sizeof(t_sphere));
 	st3 = (t_sphere*)malloc(sizeof(t_sphere));
 	init_sdl(&sdl);
-
-	rtv.lights = get_lights();
-	rtv.spheres = get_spheres();;
 	rtv.graph = &sdl;
 	
+	
+	char *fig = "SPHERE; 2, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
+	char *fig2 = "PLANE; 4, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
+	char *lig = "AMBIENT; 0.2; 1, 4, 4; 2, 3, 4;";
+	//st = get_sphere(fig);
+	//rtv.spheres = st;
+	// light = create_light(lig);
+	// printf("---------------------------------------------------------\n");
+	// print_light(light);
+	// printf("---------------------------------------------------------\n");
+	// print_object(st);
+	// printf("%s\n", fig);
+	
+	rtv.lights = NULL;
+	rtv.spheres = NULL;
+	// get_object(fig, &rtv);
+	// get_object(fig2, &rtv);
+	// get_object(lig, &rtv);
+	// print_all_objects(&rtv);
+
+	rtv.scenes_file = av[1];
+	read_scene(&rtv);
+	// printf("---------------------------------------------------------\n");	
+	//print_all_objects(&rtv);
+	// printf("---------------------------------------------------------\n");
+
 	cycle(&rtv);
 	while (1)
 	{	

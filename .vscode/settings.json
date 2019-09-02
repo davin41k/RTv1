@@ -12,6 +12,7 @@
         "stdlib.h": "c",
         "types.h": "c",
         "math.h": "c",
-        "cmath": "c"
+        "cmath": "c",
+        "unistd.h": "c"
     }
 }
