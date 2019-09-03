@@ -38,18 +38,15 @@ void	error_exit(int errno)
 {
 	if (errno == USAGE)
 	{
-		ft_putendl("usage:    ./wolf3d a_map_file.wolf:");
-		ft_putendl("map dimension: min[4x4], max[120x120]");
-		ft_putendl("textures range between [0, 4]");
-		ft_putendl("[w, a, s, d] - move, left shift - acceleration");
-		ft_putendl("[t] - switch textures packs");
+		ft_putendl("usage:    ./RTv1 a_scene_file.rtv1:");
+		ft_putendl("one object in one line in the file");
 	}
 	else if (errno == THREAD_ERR)
 		ft_putendl("thread error");
 	else if (errno == MEM_ERR)
 		ft_putendl("memory error");
-	else if (errno == MAP_ERR)
-		ft_putendl("error: map is not correct");
+	else if (errno == SCENE_ERR)
+		ft_putendl("error: scene is not correct");
 	else if (errno == INCORRECT_MAP)
 		ft_putendl("error: map is too big or too small");
 	else if (errno == LOAD_ERR)

@@ -47,7 +47,7 @@ void		set_pixel(t_graph *img, int x, int y, int color)
 	img->pixels2[tmpx + tmpy * W] = color;
 }
 
-t_vec_d		CanvasToViewport(int x, int y)
+t_vec_d		get_screen_coord(int x, int y)
 {
 	t_vec_d    d;
 
@@ -57,14 +57,14 @@ t_vec_d		CanvasToViewport(int x, int y)
 	return (d);
 }
 
-t_vec_d		IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere)
+t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d D, t_sphere *sphere)
 {
 	t_vec_d    t;
 	t_vec_d    k;
 	
 	t_vec_d C = sphere->center;
 	double r = sphere->radius;
-	t_vec_d oc = O - C;
+	t_vec_d oc = or - C;
 
 	k.x = dot(D, D);
 	k.y = 2*dot(oc, D);
@@ -73,8 +73,8 @@ t_vec_d		IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere)
 	double discriminant = k.y * k.y - 4 * k.x * k.z;
 	if (discriminant < 0)
 	{
-		t.x = 99999999999;
-		t.y = 99999999999;
+		t.x = INFINIT;
+		t.y = INFINIT;
 		return (t);
 	}
 	t.x = (-k.y + sqrt(discriminant)) / (2 * k.x);
@@ -82,18 +82,18 @@ t_vec_d		IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere)
 	return (t);
 }
 
-int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
+int		do_ray_trace(t_vec_d or, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
 {
 	t_sphere *closest_sphere = NULL;
 	t_light		*light = rtv->lights;
 	t_sphere	*head = rtv->spheres;
 
-	calc_init(O, D, &(rtv->calc));
-	ClosestIntersection(O, D, t_min, t_max, &(rtv->calc), rtv);
+	calc_init(or, D, &(rtv->calc));
+	clos_intersection(or, D, t_min, t_max, &(rtv->calc), rtv);
 	if (rtv->calc.clost_spher == NULL)
 		return (0xFFCACB); //easy pink
 
-	t_vec_d point = O + multiplay(rtv->calc.clost_t, D);
+	t_vec_d point = or + multiplay(rtv->calc.clost_t, D);
 	t_vec_d	normal = point - rtv->calc.clost_spher->center;
 	// normal = multiplay( 1.0 / length(normal), normal);
 	rtv->calc.point = point;
@@ -103,7 +103,7 @@ int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
 	t_vec_d view = -1 * D;
 	rtv->calc.N = normal;
 	rtv->calc.D *= -1;
-	t_vec_d color = ComputeLighting(rtv, point, rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
+	t_vec_d color = calc_lightning(rtv, point, rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
 	check_correct_chanels(&color);
 	return (((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z)));
 }
@@ -115,15 +115,15 @@ void	cycle(t_rtv *rtv)
 	int x;
 
 	x = -W / 2 - 1;													// - 1
-	t_vec_d O = (t_vec_d){0, 0, 0};
+	t_vec_d or = (t_vec_d){0, 0, 0};
 
 	while (x++ < W / 2 - 1)
 	{
 		y = -H / 2 - 1;											// поставил -1
 		while (y++ < H / 2 - 1)
 		{
-			t_vec_d d = CanvasToViewport(x, y);
-			int color = TraceRay(O, d, 1, 999999999, rtv);
+			t_vec_d d = get_screen_coord(x, y);
+			int color = do_ray_trace(or, d, 1, INFINIT, rtv);
 			set_pixel(rtv->graph, x, y, color);
 		}
 	}
@@ -153,39 +153,26 @@ int		main(int ac, char **av)
 	st2 = (t_sphere*)malloc(sizeof(t_sphere));
 	st3 = (t_sphere*)malloc(sizeof(t_sphere));
 	init_sdl(&sdl);
+
+	//read_scene
+		// rtv.lights = get_lights();
+		// rtv.spheres = get_spheres();
 	rtv.graph = &sdl;
-	
 	
 	char *fig = "SPHERE; 2, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
 	char *fig2 = "PLANE; 4, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
 	char *lig = "AMBIENT; 0.2; 1, 4, 4; 2, 3, 4;";
-	//st = get_sphere(fig);
-	//rtv.spheres = st;
-	// light = create_light(lig);
-	// printf("---------------------------------------------------------\n");
-	// print_light(light);
-	// printf("---------------------------------------------------------\n");
-	// print_object(st);
-	// printf("%s\n", fig);
 	
 	rtv.lights = NULL;
 	rtv.spheres = NULL;
-	// get_object(fig, &rtv);
-	// get_object(fig2, &rtv);
-	// get_object(lig, &rtv);
-	// print_all_objects(&rtv);
 
 	rtv.scenes_file = av[1];
 	read_scene(&rtv);
-	// printf("---------------------------------------------------------\n");	
-	//print_all_objects(&rtv);
-	// printf("---------------------------------------------------------\n");
 
 	cycle(&rtv);
 	while (1)
 	{	
 		ft_events(&sdl);
-		//SDL_Delay(1000);
 		SDL_UpdateWindowSurface(sdl.win);
 	}
 	return (0);

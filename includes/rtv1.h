@@ -27,7 +27,7 @@
 # define USAGE			0
 # define THREAD_ERR		1
 # define MEM_ERR		2
-# define MAP_ERR		3
+# define SCENE_ERR		3
 # define INCORRECT_MAP	4
 # define LOAD_ERR		5
 # define FORMAT_ERR		6
@@ -35,6 +35,7 @@
 # define _USE_MATH_DEFINES
 
 # define INFINIT		1000000000
+# define EPSILON		0.0001
 # define START_CANVAS	1
 # define Vw				1
 # define Vh				1
@@ -132,7 +133,7 @@ typedef	struct		s_light
 
 typedef	struct		s_calc
 {
-	t_vec_d			O;
+	t_vec_d			or;
 	t_vec_d			D;
 	t_vec_d			L;
 	t_vec_d			N;
@@ -171,15 +172,15 @@ int		rtv_init(t_rtv *rtv, char *scenes_file);
 double	dot(t_vec_d v1, t_vec_d v2);
 void	init_sdl(t_graph *sdl);
 void	set_pixel(t_graph *img, int x, int y, int color);
-t_vec_d	CanvasToViewport(int x, int y);
-t_vec_d	IntersectRaySphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
-int		TraceRay(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv);
+t_vec_d	get_screen_coord(int x, int y);
+t_vec_d	ray_hit_sphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
+int		do_ray_trace(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv);
 void	cycle(t_rtv *rtv);
 void	t_events(t_graph *sdl);
 int		main(int ac, char **av);
 
 //	***LUGHTNING***
-double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec);
+double	calc_lightning(t_rtv *rtv, t_vec_d P, int spec);
 t_vec_d	multiplay(double k, t_vec_d vec);
 double length(t_vec_d vec);
 void	check_correct_chanels(t_vec_d *color);
@@ -191,7 +192,7 @@ t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
 t_sphere	*get_spheres(void);
 
 //	***MORE_DRAW_FUNC***
-int			ClosestIntersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv);
+int			clos_intersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv);
 void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc);
 t_vec_d		intersec_object(t_vec_d O, t_vec_d D, t_sphere *obj);
 t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane);

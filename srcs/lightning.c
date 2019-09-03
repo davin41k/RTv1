@@ -17,7 +17,7 @@ double length(t_vec_d vec)
  	return(sqrt(dot(vec, vec)));
 }
 
-double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
+double	calc_lightning(t_rtv *rtv, t_vec_d P, int spec)
 {
 	t_light *light= rtv->lights;
 	double 	i = 0.0;
@@ -38,7 +38,7 @@ double	ComputeLighting(t_rtv *rtv, t_vec_d P, int spec)
 			else
 				L = light->dir;
 			t_calc calc = rtv->calc;
-			ClosestIntersection(P, L, 0.0001, 99999999, &calc, rtv);						//seg
+			clos_intersection(P, L, EPSILON, INFINIT, &calc, rtv);						//seg
 			//printf("HELLO\n");
 			if (calc.clost_spher != NULL)
 			{

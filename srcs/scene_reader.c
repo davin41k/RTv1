@@ -87,7 +87,7 @@ int		get_object(char *object, t_rtv *rtv)
 		new_light->next = old_light;
 	}
 	else if (get_abstract_obj_type(object) == CAMERA)
-		rtv->calc.O = get_cam_pos(object);
+		rtv->calc.or = get_cam_pos(object);
 	return (flag);
 }
 
@@ -115,7 +115,8 @@ t_sphere	*get_sphere(char *obj)
 	t_sphere	*sphere;
 	char		*save_str;
 
-	sphere = (t_sphere*)ft_memalloc(sizeof(t_sphere));
+	if (!(sphere = (t_sphere*)ft_memalloc(sizeof(t_sphere))))
+		error_exit(MEM_ERR);
 	save_str = obj;
 	nullify_object(sphere);
 	sphere->obj_type = get_obj_type(obj); //СМЕСТИТЬ!!!
@@ -133,7 +134,8 @@ t_light	*create_light(char *obj)
 {
 	t_light		*light;
 
-	light = (t_light*)ft_memalloc(sizeof(t_light));
+	if(!(light = (t_light*)ft_memalloc(sizeof(t_light))))
+		error_exit(MEM_ERR);
 	nullify_light(light);
 	light->type = get_obj_type(obj);
 	
@@ -209,8 +211,10 @@ int			get_abstract_obj_type(char *obj)
 		abstract_type = FIGURE;
 	else if (type == AMBIENT || type == POINT || type == DIRECTIONAL)
 		abstract_type = LIGHT;
-	else
+	else if (type == CAMERA)
 		abstract_type = CAMERA;
+	else
+		error_exit(SCENE_ERR);
 	return (abstract_type);
 }
 
@@ -242,5 +246,7 @@ int			get_obj_type(char *object)
 		type = DIRECTIONAL;
 	else if (ft_strstr(object, "CAMERA"))
 		type = CAMERA;
+	else
+		error_exit(SCENE_ERR);
 	return (type);
 }

@@ -12,20 +12,20 @@
 
 #include "../includes/rtv1.h"
 
-int			ClosestIntersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv)
+int			clos_intersection(t_vec_d or, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv)
 {
 	t_light		*light = rtv->lights;
 	t_sphere	*head = rtv->spheres;
 	int			flag;
 
 	flag = 0;
-	calc->clost_t = 999999999;
+	calc->clost_t = INFINIT;
 	calc->clost_spher = NULL;
 
 	while (head)
 	{
 		//t_vec_d t  = IntersectRaySphere(O, D, head);
-		t_vec_d t = intersec_object(O, D, head);
+		t_vec_d t = intersec_object(or, D, head);
 		
 		if (t.x >= t_min && t.x <= t_max && t.x < calc->clost_t)
 		{
@@ -62,7 +62,7 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 	else if (fig_type == CYLINDER || fig_type == CONE)
 	{
 		normal = 1.0 / length(rtv->calc.clost_spher->rotation) * rtv->calc.clost_spher->rotation;
-		double tmp = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.O - rtv->calc.clost_spher->center), normal);
+		double tmp = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
 		normal = rtv->calc.point - rtv->calc.clost_spher->center - multiplay(tmp, normal);
 		//normal = dot()
 		// normal = (dot(rtv->calc.D, rtv->calc.clost_spher->rotation) < 0.0 ?
@@ -72,25 +72,32 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 		// + dot((rtv->calc.O - rtv->calc.clost_spher->center), rtv->calc.clost_spher->rotation);
 		// normal = rtv->calc.clost_spher->rotation / sqrt(dot(rtv->calc.clost_spher->rotation, rtv->calc.clost_spher->rotation));
 	}
+	else
+	{
+		double m = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
+		double a = rtv->calc.clost_spher->radius * rtv->calc.clost_spher->radius / m;
+		normal = (rtv->calc.point -  rtv->calc.clost_spher->rotation -  rtv->calc.D * m - rtv->calc.D * a);
+		normal = 1.0 / length(normal);
+	}
 	return (normal);
 }
 
-t_vec_d		intersec_object(t_vec_d O, t_vec_d D, t_sphere *obj)
+t_vec_d		intersec_object(t_vec_d or, t_vec_d D, t_sphere *obj)
 {
 	t_vec_d		t;
 
 	if (obj->obj_type == SPHERE)
-		t = IntersectRaySphere(O, D, obj);
+		t = ray_hit_sphere(or, D, obj);
 	else if (obj->obj_type == PLANE)
-		t = intersec_ray_plane(O, D, obj);
+		t = intersec_ray_plane(or, D, obj);
 	else if (obj->obj_type == CYLINDER)
-		t = intersec_ray_cylinder(O, D, obj);
+		t = intersec_ray_cylinder(or, D, obj);
 	else if (obj->obj_type == CONE)
-		t = intersec_ray_cone(O, D, obj);
+		t = intersec_ray_cone(or, D, obj);
 	return (t);
 }
 
-t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone)
+t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d D, t_sphere *cone)
 {
 	t_vec_d		t;
 	t_vec_d		k;
@@ -98,7 +105,7 @@ t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone)
 
 	t_vec_d C = cone->center;
 	double r = cone->radius;
-	t_vec_d x = O - C;
+	t_vec_d x = or - C;
 
 	tmp = cone->rotation; 
 	tmp = 1.0 / length(cone->rotation) * cone->rotation;
@@ -110,9 +117,9 @@ t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone)
 	double discriminant = k.y * k.y - 4 * k.x * k.z;	
 	if (discriminant < 0.0)
 		{
-			t.x = 99999999999;
-			t.y = 99999999999;
-			t.z = 99999999999;
+			t.x = INFINIT;
+			t.y = INFINIT;
+			t.z = INFINIT;
 			return (t);
 		}
 	t.x = (-k.y + sqrt(discriminant)) / (2 * k.x);
@@ -121,7 +128,7 @@ t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone)
 	return (t);
 }
 
-t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane)
+t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d D, t_sphere *plane)
 {
 	t_vec_d		t;
 	t_vec_d		normalize;
@@ -130,16 +137,16 @@ t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane)
 
 	normalize = (1.0 / length(plane->rotation)) * plane->rotation;
 
-	if (dot(D, normalize) < 0.0001)
+	if (dot(D, normalize) < EPSILON)
 	{
-		if (dot(D, -normalize) < 0.0001)
+		if (dot(D, -normalize) < EPSILON)
         {
-            t.x = 999999999;
-            t.y = 999999999;
+            t.x = INFINIT;
+            t.y = INFINIT;
             return (t);
         }
 	}
-	t_vec_d oc = O - plane->center;
+	t_vec_d oc = or - plane->center;
 	t.x = dot(-oc, -normalize) / dot(D, -normalize);
 	t.y = t.x;
 
@@ -153,7 +160,7 @@ t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane)
 	return (t);
 }
 
-t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone)
+t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d D, t_sphere *cone)
 {
 	t_vec_d    t;
 	t_vec_d    k;
@@ -161,7 +168,7 @@ t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone)
 
 	t_vec_d C = cone->center;
 	double r = cone->radius;
-	t_vec_d x = O - C;
+	t_vec_d x = or - C;
 
 	tmp = cone->rotation; 
 	tmp = 1.0 / length(cone->rotation) * cone->rotation;
@@ -172,8 +179,8 @@ t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone)
 	double discriminant = k.y * k.y - 4 * k.x * k.z;	
 	if (discriminant < 0)
 		{
-			t.x = 99999999999;
-			t.y = 99999999999;
+			t.x = INFINIT;
+			t.y = INFINIT;
 			return (t);
 		}
 	t.x = (-k.y + sqrt(discriminant)) / (2 * k.x);
@@ -182,8 +189,8 @@ t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone)
 	return (t);
 }
 
-void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc)
+void		calc_init(t_vec_d or, t_vec_d D, t_calc *calc)
 {
-	calc->O = O;
+	calc->or = or;
 	calc->D = D;
 }
