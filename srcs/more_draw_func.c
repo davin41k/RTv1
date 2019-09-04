@@ -12,7 +12,18 @@
 
 #include "../includes/rtv1.h"
 
-int			clos_intersection(t_vec_d or, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv)
+t_calc		to_calc(t_vec_d or, t_vec_d dir, double t_min, double t_max)
+{
+	t_calc		calc;
+
+	calc.or = or;
+	calc.dir = dir;
+	calc.t_min = t_min;
+	calc.t_max = t_max;
+	return (calc);
+}
+
+int			clos_intersection(t_calc c, t_calc *calc, t_rtv *rtv)
 {
 	t_light		*light = rtv->lights;
 	t_sphere	*head = rtv->spheres;
@@ -25,15 +36,15 @@ int			clos_intersection(t_vec_d or, t_vec_d D, double t_min, double t_max, t_cal
 	while (head)
 	{
 		//t_vec_d t  = IntersectRaySphere(O, D, head);
-		t_vec_d t = intersec_object(or, D, head);
+		t_vec_d t = intersec_object(c.or, c.dir, head);
 		
-		if (t.x >= t_min && t.x <= t_max && t.x < calc->clost_t)
+		if (t.x >= c.t_min && t.x <= c.t_max && t.x < calc->clost_t)
 		{
 			calc->clost_t = t.x;
 			calc->clost_spher = head;
 			flag = 1;
 		}
-		if (t.y >= t_min && t.y <= t_max && t.y < calc->clost_t)
+		if (t.y >= c.t_min && t.y <= c.t_max && t.y < calc->clost_t)
 		{
 			calc->clost_t = t.y;
 			calc->clost_spher = head;
@@ -57,12 +68,12 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 	else if (fig_type == PLANE)
 		// normal = (1.0 / length(rtv->calc.clost_spher->rotation)) * rtv->calc.clost_spher->rotation; 
 
-		normal = (dot(rtv->calc.D, rtv->calc.clost_spher->rotation) < 0.0 ?
+		normal = (dot(rtv->calc.dir, rtv->calc.clost_spher->rotation) < 0.0 ?
 		-rtv->calc.clost_spher->rotation : rtv->calc.clost_spher->rotation);
 	else if (fig_type == CYLINDER || fig_type == CONE)
 	{
 		normal = 1.0 / length(rtv->calc.clost_spher->rotation) * rtv->calc.clost_spher->rotation;
-		double tmp = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
+		double tmp = dot(rtv->calc.dir, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
 		normal = rtv->calc.point - rtv->calc.clost_spher->center - multiplay(tmp, normal);
 		//normal = dot()
 		// normal = (dot(rtv->calc.D, rtv->calc.clost_spher->rotation) < 0.0 ?
@@ -74,30 +85,30 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 	}
 	else
 	{
-		double m = dot(rtv->calc.D, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
+		double m = dot(rtv->calc.dir, normal) * rtv->calc.clost_t + dot((rtv->calc.or - rtv->calc.clost_spher->center), normal);
 		double a = rtv->calc.clost_spher->radius * rtv->calc.clost_spher->radius / m;
-		normal = (rtv->calc.point -  rtv->calc.clost_spher->rotation -  rtv->calc.D * m - rtv->calc.D * a);
+		normal = (rtv->calc.point -  rtv->calc.clost_spher->rotation -  rtv->calc.dir * m - rtv->calc.dir * a);
 		normal = 1.0 / length(normal);
 	}
 	return (normal);
 }
 
-t_vec_d		intersec_object(t_vec_d or, t_vec_d D, t_sphere *obj)
+t_vec_d		intersec_object(t_vec_d or, t_vec_d dir, t_sphere *obj)
 {
 	t_vec_d		t;
 
 	if (obj->obj_type == SPHERE)
-		t = ray_hit_sphere(or, D, obj);
+		t = ray_hit_sphere(or, dir, obj);
 	else if (obj->obj_type == PLANE)
-		t = intersec_ray_plane(or, D, obj);
+		t = intersec_ray_plane(or, dir, obj);
 	else if (obj->obj_type == CYLINDER)
-		t = intersec_ray_cylinder(or, D, obj);
+		t = intersec_ray_cylinder(or, dir, obj);
 	else if (obj->obj_type == CONE)
-		t = intersec_ray_cone(or, D, obj);
+		t = intersec_ray_cone(or, dir, obj);
 	return (t);
 }
 
-t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d D, t_sphere *cone)
+t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d dir, t_sphere *cone)
 {
 	t_vec_d		t;
 	t_vec_d		k;
@@ -109,8 +120,8 @@ t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d D, t_sphere *cone)
 
 	tmp = cone->rotation; 
 	tmp = 1.0 / length(cone->rotation) * cone->rotation;
-	k.x = dot(D, D) - (1 + pow(cone->fig_angle, 2)) * pow(dot(D, tmp), 2);
-	k.y = dot(D, x) - (1 + pow(cone->fig_angle, 2)) * dot(x, tmp) * dot(D, tmp);
+	k.x = dot(dir, dir) - (1 + pow(cone->fig_angle, 2)) * pow(dot(dir, tmp), 2);
+	k.y = dot(dir, x) - (1 + pow(cone->fig_angle, 2)) * dot(x, tmp) * dot(dir, tmp);
 	k.y *= 2;
 	k.z = dot(x, x) - (1 + pow(cone->fig_angle, 2)) * pow(dot(x, tmp), 2.0);
 	
@@ -128,7 +139,7 @@ t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d D, t_sphere *cone)
 	return (t);
 }
 
-t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d D, t_sphere *plane)
+t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d dir, t_sphere *plane)
 {
 	t_vec_d		t;
 	t_vec_d		normalize;
@@ -137,9 +148,9 @@ t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d D, t_sphere *plane)
 
 	normalize = (1.0 / length(plane->rotation)) * plane->rotation;
 
-	if (dot(D, normalize) < EPSILON)
+	if (dot(dir, normalize) < EPSILON)
 	{
-		if (dot(D, -normalize) < EPSILON)
+		if (dot(dir, -normalize) < EPSILON)
         {
             t.x = INFINIT;
             t.y = INFINIT;
@@ -147,7 +158,7 @@ t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d D, t_sphere *plane)
         }
 	}
 	t_vec_d oc = or - plane->center;
-	t.x = dot(-oc, -normalize) / dot(D, -normalize);
+	t.x = dot(-oc, -normalize) / dot(dir, -normalize);
 	t.y = t.x;
 
 	// t.x = ((dot(plane->rotation, plane->center)) - dot(O, plane->center));
@@ -160,7 +171,7 @@ t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d D, t_sphere *plane)
 	return (t);
 }
 
-t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d D, t_sphere *cone)
+t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d dir, t_sphere *cone)
 {
 	t_vec_d    t;
 	t_vec_d    k;
@@ -172,8 +183,8 @@ t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d D, t_sphere *cone)
 
 	tmp = cone->rotation; 
 	tmp = 1.0 / length(cone->rotation) * cone->rotation;
-	k.x = dot(D, D) - pow(dot(D, tmp),2);
-	k.y = dot(D, x) - dot(D, tmp) * dot(x, tmp);
+	k.x = dot(dir, dir) - pow(dot(dir, tmp),2);
+	k.y = dot(dir, x) - dot(dir, tmp) * dot(x, tmp);
 	k.y *= 2;
 	k.z = dot(x, x) - pow(dot(x, tmp), 2) - cone->radius * cone->radius;
 	double discriminant = k.y * k.y - 4 * k.x * k.z;	
@@ -189,8 +200,8 @@ t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d D, t_sphere *cone)
 	return (t);
 }
 
-void		calc_init(t_vec_d or, t_vec_d D, t_calc *calc)
+void		calc_init(t_vec_d or, t_vec_d dir, t_calc *calc)
 {
 	calc->or = or;
-	calc->D = D;
+	calc->dir = dir;
 }

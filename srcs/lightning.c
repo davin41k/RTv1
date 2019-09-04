@@ -21,10 +21,10 @@ double	calc_lightning(t_rtv *rtv, t_vec_d P, int spec)
 {
 	t_light *light= rtv->lights;
 	double 	i = 0.0;
-	t_vec_d	L;
+	t_vec_d	l_ray;
 	double n_dot_l;
 	
-	double	len_normal = length(rtv->calc.N);
+	double	len_normal = length(rtv->calc.norml);
 	while (light)
 	{
 		if (light->type == AMBIENT)
@@ -34,27 +34,27 @@ double	calc_lightning(t_rtv *rtv, t_vec_d P, int spec)
 			
 
 			if (light->type == POINT)
-				L = light->pos - P;
+				l_ray = light->pos - P;
 			else
-				L = light->dir;
+				l_ray = light->dir;
 			t_calc calc = rtv->calc;
-			clos_intersection(P, L, EPSILON, INFINIT, &calc, rtv);						//seg
+			clos_intersection(to_calc(P, l_ray, EPSILON, INFINIT), &calc, rtv);						//seg
 			//printf("HELLO\n");
 			if (calc.clost_spher != NULL)
 			{
 				light = light->next;
 				continue ;
 			}
-			n_dot_l = dot(rtv->calc.N, L);
+			n_dot_l = dot(rtv->calc.norml, l_ray);
 			if (n_dot_l > 0)
-				i += light->intensity * n_dot_l / (len_normal * length(L));
+				i += light->intensity * n_dot_l / (len_normal * length(l_ray));
 			if (spec != -1) //зеркальность
 			{
-				t_vec_d vec_r = 2.0 * dot(rtv->calc.N, L) * rtv->calc.N - L;
-				double r_dot_v = dot(vec_r, rtv->calc.D);
+				t_vec_d vec_r = 2.0 * dot(rtv->calc.norml, l_ray) * rtv->calc.norml - l_ray;
+				double r_dot_v = dot(vec_r, rtv->calc.dir);
 				if (r_dot_v > 0) {
 					//printf("AFTER POW %f, \n", pow(r_dot_v / (length(vec_r) * length(D)), spec));
-					i +=light->intensity * pow(r_dot_v / (length(vec_r) * length(rtv->calc.D)), spec); }
+					i +=light->intensity * pow(r_dot_v / (length(vec_r) * length(rtv->calc.dir)), spec); }
 				//printf("%f, i\n");
 			}
 		}

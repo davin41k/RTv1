@@ -57,7 +57,7 @@ t_vec_d		get_screen_coord(int x, int y)
 	return (d);
 }
 
-t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d D, t_sphere *sphere)
+t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere)
 {
 	t_vec_d    t;
 	t_vec_d    k;
@@ -66,8 +66,8 @@ t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d D, t_sphere *sphere)
 	double r = sphere->radius;
 	t_vec_d oc = or - C;
 
-	k.x = dot(D, D);
-	k.y = 2*dot(oc, D);
+	k.x = dot(dir, dir);
+	k.y = 2*dot(oc, dir);
 	k.z = dot(oc, oc) - r*r;
 
 	double discriminant = k.y * k.y - 4 * k.x * k.z;
@@ -82,27 +82,27 @@ t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d D, t_sphere *sphere)
 	return (t);
 }
 
-int		do_ray_trace(t_vec_d or, t_vec_d D, double t_min, double t_max, t_rtv *rtv)
+int		do_ray_trace(t_calc cl, t_rtv *rtv)
 {
 	t_sphere *closest_sphere = NULL;
 	t_light		*light = rtv->lights;
 	t_sphere	*head = rtv->spheres;
 
-	calc_init(or, D, &(rtv->calc));
-	clos_intersection(or, D, t_min, t_max, &(rtv->calc), rtv);
+	calc_init(cl.or, cl.dir, &(rtv->calc));
+	clos_intersection(to_calc(cl.or, cl.dir, cl.t_min, cl.t_max), &(rtv->calc), rtv);
 	if (rtv->calc.clost_spher == NULL)
 		return (0xFFCACB); //easy pink
 
-	t_vec_d point = or + multiplay(rtv->calc.clost_t, D);
+	t_vec_d point = cl.or + multiplay(rtv->calc.clost_t, cl.dir);
 	t_vec_d	normal = point - rtv->calc.clost_spher->center;
 	// normal = multiplay( 1.0 / length(normal), normal);
 	rtv->calc.point = point;
 
 	normal = calc_normal(rtv, rtv->calc.clost_spher->obj_type);
 	
-	t_vec_d view = -1 * D;
-	rtv->calc.N = normal;
-	rtv->calc.D *= -1;
+	t_vec_d view = -1 * cl.dir;
+	rtv->calc.norml = normal;
+	rtv->calc.dir *= -1;
 	t_vec_d color = calc_lightning(rtv, point, rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
 	check_correct_chanels(&color);
 	return (((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z)));
@@ -122,8 +122,8 @@ void	cycle(t_rtv *rtv)
 		y = -H / 2 - 1;											// поставил -1
 		while (y++ < H / 2 - 1)
 		{
-			t_vec_d d = get_screen_coord(x, y);
-			int color = do_ray_trace(or, d, 1, INFINIT, rtv);
+			t_vec_d dir = get_screen_coord(x, y);
+			int color = do_ray_trace(to_calc(or, dir, 1, INFINIT), rtv);
 			set_pixel(rtv->graph, x, y, color);
 		}
 	}
@@ -152,12 +152,17 @@ int		main(int ac, char **av)
 	st = (t_sphere*)malloc(sizeof(t_sphere));
 	st2 = (t_sphere*)malloc(sizeof(t_sphere));
 	st3 = (t_sphere*)malloc(sizeof(t_sphere));
-	init_sdl(&sdl);
+
+	rtv.graph = &sdl;
+	rtv.scenes_file = av[1];
+
+	// init_sdl(&sdl);
+	rtv_init(&rtv, av[1]);
+	sdl_init(&rtv, (rtv.graph));
 
 	//read_scene
 		// rtv.lights = get_lights();
 		// rtv.spheres = get_spheres();
-	rtv.graph = &sdl;
 	
 	char *fig = "SPHERE; 2, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
 	char *fig2 = "PLANE; 4, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
@@ -166,7 +171,6 @@ int		main(int ac, char **av)
 	rtv.lights = NULL;
 	rtv.spheres = NULL;
 
-	rtv.scenes_file = av[1];
 	read_scene(&rtv);
 
 	cycle(&rtv);

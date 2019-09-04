@@ -134,9 +134,9 @@ typedef	struct		s_light
 typedef	struct		s_calc
 {
 	t_vec_d			or;
-	t_vec_d			D;
-	t_vec_d			L;
-	t_vec_d			N;
+	t_vec_d			dir;
+	t_vec_d			l_ray;
+	t_vec_d			norml;
 	double			t_min;
 	double			t_max;
 	double			clost_t;
@@ -173,8 +173,8 @@ double	dot(t_vec_d v1, t_vec_d v2);
 void	init_sdl(t_graph *sdl);
 void	set_pixel(t_graph *img, int x, int y, int color);
 t_vec_d	get_screen_coord(int x, int y);
-t_vec_d	ray_hit_sphere(t_vec_d O, t_vec_d D, t_sphere *sphere);
-int		do_ray_trace(t_vec_d O, t_vec_d D, double t_min, double t_max, t_rtv *rtv);
+t_vec_d	ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere);
+int		do_ray_trace(t_calc cl, t_rtv *rtv);
 void	cycle(t_rtv *rtv);
 void	t_events(t_graph *sdl);
 int		main(int ac, char **av);
@@ -192,13 +192,14 @@ t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
 t_sphere	*get_spheres(void);
 
 //	***MORE_DRAW_FUNC***
-int			clos_intersection(t_vec_d O, t_vec_d D, double t_min, double t_max, t_calc *calc, t_rtv *rtv);
-void		calc_init(t_vec_d O, t_vec_d D, t_calc *calc);
-t_vec_d		intersec_object(t_vec_d O, t_vec_d D, t_sphere *obj);
-t_vec_d		intersec_ray_plane(t_vec_d O, t_vec_d D, t_sphere *plane);
-t_vec_d		intersec_ray_cylinder(t_vec_d O, t_vec_d D, t_sphere *cone);
+t_calc		to_calc(t_vec_d or, t_vec_d dir, double t_min, double t_max);
+int			clos_intersection(t_calc c, t_calc *calc, t_rtv *rtv);
+void		calc_init(t_vec_d or, t_vec_d dir, t_calc *calc);
+t_vec_d		intersec_object(t_vec_d or, t_vec_d dir, t_sphere *obj);
+t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d dir, t_sphere *plane);
+t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d dir, t_sphere *cone);
 t_vec_d		calc_normal(t_rtv *rtv, int fig_type);
-t_vec_d		intersec_ray_cone(t_vec_d O, t_vec_d D, t_sphere *cone);
+t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d dir, t_sphere *cone);
 
 //	***SCENE_READER***
 int			read_scene(t_rtv *rtv);
@@ -208,7 +209,7 @@ t_vec_d		get_next_vec(char **fig);
 double		get_next_num(char **fig);
 t_light		*create_light(char *obj);
 int			check_map_format(char *file_name);
-int			get_object(char *object, t_rtv *rtv);
+void		get_object(char *object, t_rtv *rtv);
 void		nullify_object(t_sphere *obj);
 void		nullify_light(t_light *light);
 t_vec_d		get_next_vec(char **fig);
@@ -225,5 +226,9 @@ void	print_light(t_light *light);
 void	print_all_objects(t_rtv *rtv);
 //to libf
 double		ft_atof(char *nptr);
+
+void    sdl_init(t_rtv *rtv, t_graph *graph);
+int		rtv_init(t_rtv *rtv, char *scene_file_name);
+
 
 #endif

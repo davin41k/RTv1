@@ -63,15 +63,13 @@ int				check_map_format(char *file_name)
 	return (1);
 }
 
-int		get_object(char *object, t_rtv *rtv)
+void	get_object(char *object, t_rtv *rtv)
 {
-	int			flag;
 	t_sphere	*new_sphere;
 	t_sphere	*old_sphere;
 	t_light		*old_light;
 	t_light		*new_light;
 
-	flag = 0;
 	if (get_abstract_obj_type(object) == FIGURE)
 	{
 		old_sphere = rtv->spheres;
@@ -88,7 +86,6 @@ int		get_object(char *object, t_rtv *rtv)
 	}
 	else if (get_abstract_obj_type(object) == CAMERA)
 		rtv->calc.or = get_cam_pos(object);
-	return (flag);
 }
 
 void	nullify_object(t_sphere *obj)
