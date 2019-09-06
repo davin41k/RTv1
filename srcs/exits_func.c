@@ -49,8 +49,8 @@ void	error_exit(int errno)
 		ft_putendl("error: scene is not correct");
 	else if (errno == INCORRECT_MAP)
 		ft_putendl("error: map is too big or too small");
-	else if (errno == LOAD_ERR)
-		ft_putendl("error: textures was not load");
+	else if (errno == COLOR_ERR)
+		ft_putendl("error: some color is not correct");
 	else if (errno == FORMAT_ERR)
 		ft_putendl("error: map have different format");
 	exit(0);

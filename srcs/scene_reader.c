@@ -76,6 +76,7 @@ void	get_object(char *object, t_rtv *rtv)
 		new_sphere = get_sphere(object);
 		rtv->spheres = new_sphere;
 		new_sphere->next = old_sphere;
+		check_correct_chanels(&rtv->spheres->color);
 	}
 	else if (get_abstract_obj_type(object) == LIGHT)
 	{

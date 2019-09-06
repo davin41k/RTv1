@@ -29,7 +29,7 @@
 # define MEM_ERR		2
 # define SCENE_ERR		3
 # define INCORRECT_MAP	4
-# define LOAD_ERR		5
+# define COLOR_ERR		5
 # define FORMAT_ERR		6
 
 # define _USE_MATH_DEFINES
@@ -146,6 +146,16 @@ typedef	struct		s_calc
 	t_vec_d			view;
 }					t_calc;
 
+typedef	struct		s_shorter
+{
+	t_vec_d			l_ray;
+	double			n_dot_l;
+	double			i;
+	double			r_dot_v;
+	t_calc			calc;
+	t_vec_d			vec_r;
+}					t_shorter;
+
 typedef	struct		s_rtv
 {
 	int				scr_h;
@@ -175,12 +185,11 @@ void	set_pixel(t_graph *img, int x, int y, int color);
 t_vec_d	get_screen_coord(int x, int y);
 t_vec_d	ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere);
 int		do_ray_trace(t_calc cl, t_rtv *rtv);
-void	cycle(t_rtv *rtv);
-void	t_events(t_graph *sdl);
+void	main_cycle(t_rtv *rtv);
 int		main(int ac, char **av);
 
 //	***LUGHTNING***
-double	calc_lightning(t_rtv *rtv, t_vec_d P, int spec);
+double	calc_lightning(t_rtv *rtv, t_vec_d p, int spec);
 t_vec_d	multiplay(double k, t_vec_d vec);
 double length(t_vec_d vec);
 void	check_correct_chanels(t_vec_d *color);

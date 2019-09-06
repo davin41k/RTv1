@@ -12,13 +12,6 @@
 
 #include "../includes/rtv1.h"
 
-// void    init(t_object *obj)
-// {
-//     obj->center = (t_v){0, -1, 3};
-//     obj->r = 1;
-//     obj->color = (t_v){255, 0, 0};
-// }
-
 double		dot(t_vec_d v1, t_vec_d v2)
 {
  return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
@@ -108,18 +101,17 @@ int		do_ray_trace(t_calc cl, t_rtv *rtv)
 	return (((int)(color.x) << 16) | ((int)(color.y) << 8 | (int)(color.z)));
 }
 
-void	cycle(t_rtv *rtv)
+void	main_cycle(t_rtv *rtv)
 {
-	// t_vec_d     m;
 	int y;
 	int x;
 
-	x = -W / 2 - 1;													// - 1
+	x = -W / 2 - 1;
 	t_vec_d or = (t_vec_d){0, 0, 0};
 
 	while (x++ < W / 2 - 1)
 	{
-		y = -H / 2 - 1;											// поставил -1
+		y = -H / 2 - 1;
 		while (y++ < H / 2 - 1)
 		{
 			t_vec_d dir = get_screen_coord(x, y);
@@ -129,20 +121,21 @@ void	cycle(t_rtv *rtv)
 	}
 }
 
-void	ft_events(t_graph *sdl)
+int			interactive_elem(t_rtv *rtv)
 {
+	t_graph		*g;
 
-	if (SDL_PollEvent(&sdl->event) && (sdl->event.type == SDL_QUIT ||
-		sdl->event.key.keysym.sym == SDLK_ESCAPE))
-		{
-			SDL_Quit();
-			exit(0);
-		}
+	g = rtv->graph;
+	SDL_PollEvent(&g->event);
+	if ((SDL_QUIT == g->event.type) || (SDL_KEYDOWN == g->event.type &&
+	SDL_SCANCODE_ESCAPE == g->event.key.keysym.scancode))
+		return (-1);
+	return (0);
 }
 
 int		main(int ac, char **av)
 {
-	t_graph		sdl;
+	t_graph		graph;
 	t_sphere	*st;
 	t_sphere	*st2;
 	t_sphere	*st3;
@@ -153,14 +146,14 @@ int		main(int ac, char **av)
 	st2 = (t_sphere*)malloc(sizeof(t_sphere));
 	st3 = (t_sphere*)malloc(sizeof(t_sphere));
 
-	rtv.graph = &sdl;
+	rtv.graph = &graph;
 	rtv.scenes_file = av[1];
 
-	// init_sdl(&sdl);
-	rtv_init(&rtv, av[1]);
-	sdl_init(&rtv, (rtv.graph));
+	init_sdl(&graph);
+	// rtv_init(&rtv, av[1]);
+	// sdl_init(&rtv, (rtv.graph));
 
-	//read_scene
+	// read_scene
 		// rtv.lights = get_lights();
 		// rtv.spheres = get_spheres();
 	
@@ -173,11 +166,16 @@ int		main(int ac, char **av)
 
 	read_scene(&rtv);
 
-	cycle(&rtv);
+	main_cycle(&rtv);
 	while (1)
 	{	
-		ft_events(&sdl);
-		SDL_UpdateWindowSurface(sdl.win);
+		//ft_events(&graph);
+		if (interactive_elem(&rtv) == -1)
+		{
+			SDL_Quit();
+			exit(0);
+		}
+		SDL_UpdateWindowSurface(graph.win);
 	}
 	return (0);
 }
