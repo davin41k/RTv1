@@ -35,7 +35,7 @@
 # define _USE_MATH_DEFINES
 
 # define INFINIT		1000000000
-# define EPSILON		0.0001
+# define EPSILON		0.000001
 # define START_CANVAS	1
 # define Vw				1
 # define Vh				1
@@ -187,6 +187,7 @@ t_vec_d	ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere);
 int		do_ray_trace(t_calc cl, t_rtv *rtv);
 void	main_cycle(t_rtv *rtv);
 int		main(int ac, char **av);
+t_vec_d		new_cam_pos(int x, int y, int z);
 
 //	***LUGHTNING***
 double	calc_lightning(t_rtv *rtv, t_vec_d p, int spec);
@@ -233,8 +234,6 @@ void	print_state(char *state, double value);
 void	print_vec(char *state, t_vec_d vec);
 void	print_light(t_light *light);
 void	print_all_objects(t_rtv *rtv);
-//to libf
-double		ft_atof(char *nptr);
 
 void    sdl_init(t_rtv *rtv, t_graph *graph);
 int		rtv_init(t_rtv *rtv, char *scene_file_name);

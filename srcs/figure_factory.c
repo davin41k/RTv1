@@ -61,23 +61,29 @@ t_sphere		*get_spheres(void)
 	t_sphere	*s3;
 	t_sphere	*s4;
 	t_sphere	*p1;
+	t_sphere	*p2;
 
 	s1 = create_sphere((t_vec_d){-1, 2, 7}, 0.5, (t_vec_d){150, 150, 1}, 500); //желтая
 	s2 = create_sphere((t_vec_d){3, 0, 4}, 1, (t_vec_d){30, 150, 30}, 10); //зеленая
 	//s3 = create_sphere((t_vec_d){0, 0, 7}, 1, (t_vec_d){200, 200, 200}, 500); // белая
-	s4 = create_sphere((t_vec_d){0, -5001, 7}, 5000, (t_vec_d){255, 255, 0}, 1);
-	p1 = create_sphere((t_vec_d){1, 0, 10}, 1, (t_vec_d){10, 200, 200}, 1000);
+	s4 = create_sphere((t_vec_d){0, -5001, 7}, 5000, (t_vec_d){255, 255, 0}, 10);
+	p1 = create_sphere((t_vec_d){1, 0, 5}, 1, (t_vec_d){10, 200, 200}, 1000);
+	p2 = create_sphere((t_vec_d){1, 0, 5}, 1, (t_vec_d){10, 200, 200}, 1000);
 
 	p1->obj_type = CONE;
-	p1->rotation = (t_vec_d){1, 10, 0};
+	p1->rotation = (t_vec_d){1, 12, 0};
 	p1->fig_angle = 0.4;
+	p2->obj_type = PLANE;
+	p2->rotation = (t_vec_d){1, 1, 0};
+	p2->fig_angle = 0.4;
+
 	
 	p1->rotation = (t_vec_d){2, 1, 0};
 	//p1->rotation =  1.0 / lngth(p1->rotation) * p1->rotation;
-	p1->specular = 100;
 	s1->next = s2;
 	s2->next = s4;
 	// s3->next = s4;
 	s4->next = p1;
+	p1->next = p2;
 	return (s1);
 }

@@ -26,7 +26,7 @@ int		read_scene(t_rtv *rtv)
 	{
 		if (*object != EMPTY_LINE)
 		{
-			printf("%s\n", object);
+			//printf("%s\n", object);
 			get_object(object, rtv);
 		}
 

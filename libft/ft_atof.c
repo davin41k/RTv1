@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "rtv1.h"
+#include "libft.h"
 
 static	char		*check_null_str(char *s, int c)
 {

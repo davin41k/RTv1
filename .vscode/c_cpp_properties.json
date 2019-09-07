@@ -6,7 +6,8 @@
                 "${workspaceFolder}",
                 "${workspaceFolder}/libft",
                 "${workspaceFolder}/includes",
-                "~/Library/Frameworks/SDL2.framework/Headers"
+                "~/Library/Frameworks/SDL2.framework/Headers",
+                "${workspaceFolder}/srcs"
             ],
             "defines": [],
             "macFrameworkPath": [

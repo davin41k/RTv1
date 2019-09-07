@@ -14,7 +14,7 @@
 
 double		dot(t_vec_d v1, t_vec_d v2)
 {
- return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
+	return (v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]);
 }
 
 void		init_sdl(t_graph *sdl)
@@ -30,19 +30,19 @@ void		init_sdl(t_graph *sdl)
 
 void		set_pixel(t_graph *img, int x, int y, int color)
 {
-	int    tmpx;
-	int    tmpy;
+	int		tmp_x;
+	int		tmp_y;
 
-	tmpx = W / 2 + x;
-	tmpy = H / 2 - y - 1;
-	if (tmpx < 0 || tmpx > (int)W || tmpy < 0 || tmpy > (int)H)
+	tmp_x = W / 2 + x;
+	tmp_y = H / 2 - y - 1;
+	if (tmp_x < 0 || tmp_x > W || tmp_y < 0 || tmp_y > H)
 		return ;
-	img->pixels2[tmpx + tmpy * W] = color;
+	img->pixels2[tmp_x + tmp_y * W] = color;
 }
 
 t_vec_d		get_screen_coord(int x, int y)
 {
-	t_vec_d    d;
+	t_vec_d		d;
 
 	d.x = (double)((double)x * 1.0 / (double)W);
 	d.y = (double)((double)y * 1.0 / (double)H);
@@ -52,16 +52,18 @@ t_vec_d		get_screen_coord(int x, int y)
 
 t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere)
 {
-	t_vec_d    t;
-	t_vec_d    k;
+	t_vec_d		t;
+	t_vec_d		k;
+	t_vec_d		c;
+	double		rad;
 	
-	t_vec_d C = sphere->center;
-	double r = sphere->radius;
-	t_vec_d oc = or - C;
+	c = sphere->center;
+	rad = sphere->radius;
+	t_vec_d oc = or - c;
 
 	k.x = dot(dir, dir);
 	k.y = 2*dot(oc, dir);
-	k.z = dot(oc, oc) - r*r;
+	k.z = dot(oc, oc) - pow(rad, 2);
 
 	double discriminant = k.y * k.y - 4 * k.x * k.z;
 	if (discriminant < 0)
@@ -133,6 +135,35 @@ int			interactive_elem(t_rtv *rtv)
 	return (0);
 }
 
+// int		new_cam_pos(t_vec_d cam_rot, t_vec_d)
+// {
+// 	t_vec_d		new_pos;
+// 	int			i;
+// 	int			j;
+
+// 	new_pos = (t_vec_d){0, 0, 0};
+// 	i = -1;
+// 	j = -1;
+// 	while (++i < 3)
+// 	{
+// 		while (++j < 3)
+// 		new_cam_pos[i]
+// 	}
+// }
+
+t_vec_d		new_cam_pos(int x, int y, int z)
+{
+	t_vec_d		new_pos;
+    int			prev_x;
+    int			prev_y;
+
+
+    new_pos.x = (x - y) * cos(0.523599);
+    new_pos.y = -z + (x + y) * sin(0.523599);
+	new_pos.z = z;
+	return (new_pos);
+}
+
 int		main(int ac, char **av)
 {
 	t_graph		graph;
@@ -149,13 +180,12 @@ int		main(int ac, char **av)
 	rtv.graph = &graph;
 	rtv.scenes_file = av[1];
 
-	init_sdl(&graph);
 	// rtv_init(&rtv, av[1]);
+	init_sdl(&graph);
+	
 	// sdl_init(&rtv, (rtv.graph));
 
-	// read_scene
-		// rtv.lights = get_lights();
-		// rtv.spheres = get_spheres();
+		
 	
 	char *fig = "SPHERE; 2, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
 	char *fig2 = "PLANE; 4, 2, 1; 1.5; 200, 220, 200; 0, 1, 0; 500; 0.4";
@@ -165,8 +195,18 @@ int		main(int ac, char **av)
 	rtv.spheres = NULL;
 
 	read_scene(&rtv);
+	
+	// rtv.lights = get_lights();
+	// rtv.spheres = get_spheres();
 
 	main_cycle(&rtv);
+	st = rtv.spheres;
+	// while (st)
+	// {
+	// 	printf("--------------------------------------------------\n");
+	// 	print_object(st);
+	// 	st = st->next;
+	// }
 	while (1)
 	{	
 		//ft_events(&graph);

@@ -34,7 +34,6 @@ double		do_calc_lightning(t_rtv *rtv, t_vec_d p, int spec, t_light **l)
 	t_shorter	sh;
 
 	sh.i = 0.0;
-
 	if (light->type == POINT)
 				sh.l_ray = light->pos - p;
 			else

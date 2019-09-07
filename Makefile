@@ -26,7 +26,6 @@ COR_H		:=	$(DIR_INC)rtv1.h
 
 #-------------------------- Source files -------------------------------------
 COR_C		:=	$(DIR_SRC)draw_three.c\
-				$(DIR_SRC)ft_atof.c\
 				$(DIR_SRC)lightning.c\
 				$(DIR_SRC)more_draw_func.c\
 				$(DIR_SRC)exits_func.c\
