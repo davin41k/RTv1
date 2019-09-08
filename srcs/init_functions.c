@@ -10,10 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "rtv1.h"
+#include "rtv1.h"
 
-
-void    sdl_init(t_rtv *rtv, t_graph *graph)
+void	sdl_init(t_rtv *rtv, t_graph *graph)
 {
 	if ((SDL_Init(SDL_INIT_VIDEO) != 0))
 		error_exit(MEM_ERR);
@@ -32,7 +31,6 @@ void    sdl_init(t_rtv *rtv, t_graph *graph)
 		error_exit(MEM_ERR);
 	printf("SDSDSDDS\n");
 	graph->pixels2 = graph->surface_window->pixels;
-
 }
 
 int		rtv_init(t_rtv *rtv, char *scene_file_name)

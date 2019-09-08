@@ -23,33 +23,43 @@ t_calc		to_calc(t_vec_d or, t_vec_d dir, double t_min, double t_max)
 	return (calc);
 }
 
+int			cycle_logic(t_vec_d t, t_calc c, t_calc *calc, t_sphere *head)
+{
+	int		flag;
+
+	flag = 0;
+	if (t.x >= c.t_min && t.x <= c.t_max && t.x < calc->clost_t)
+	{
+		calc->clost_t = t.x;
+		calc->clost_spher = head;
+		flag = 1;
+	}
+	if (t.y >= c.t_min && t.y <= c.t_max && t.y < calc->clost_t)
+	{
+		calc->clost_t = t.y;
+		calc->clost_spher = head;
+		flag = 1;
+	}
+	return (flag);
+}
+
 int			clos_intersection(t_calc c, t_calc *calc, t_rtv *rtv)
 {
-	t_light		*light = rtv->lights;
-	t_sphere	*head = rtv->spheres;
+	t_light		*light;
+	t_sphere	*head;
+	t_vec_d		t;
 	int			flag;
 
 	flag = 0;
+	light = rtv->lights;
+	head = rtv->spheres;
 	calc->clost_t = INFINIT;
 	calc->clost_spher = NULL;
-
 	while (head)
 	{
-		//t_vec_d t  = IntersectRaySphere(O, D, head);
-		t_vec_d t = intersec_object(c.or, c.dir, head);
+		t = intersec_object(c.or, c.dir, head);
 		
-		if (t.x >= c.t_min && t.x <= c.t_max && t.x < calc->clost_t)
-		{
-			calc->clost_t = t.x;
-			calc->clost_spher = head;
-			flag = 1;
-		}
-		if (t.y >= c.t_min && t.y <= c.t_max && t.y < calc->clost_t)
-		{
-			calc->clost_t = t.y;
-			calc->clost_spher = head;
-			flag = 1;
-		}
+		flag = cycle_logic(t, c, calc, head);
 		head = head->next;
 	}
 	return (flag);

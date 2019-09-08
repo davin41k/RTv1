@@ -42,6 +42,7 @@
 
 # define W				1000
 # define H				1000
+# define BG_COLOR		0xFFCACB
 
 # define AMBIENT		4
 # define POINT			5
@@ -144,6 +145,7 @@ typedef	struct		s_calc
 	t_vec_d			point;
 	t_vec_d			normal;
 	t_vec_d			view;
+	t_vec_d			color;
 }					t_calc;
 
 typedef	struct		s_shorter

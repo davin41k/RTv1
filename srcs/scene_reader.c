@@ -12,30 +12,25 @@
 
 #include "../includes/rtv1.h"
 
-int		read_scene(t_rtv *rtv)
+int			read_scene(t_rtv *rtv)
 {
 	int		fd;
 	char	*object;
 
-	// if (!check_map_format(rtv->scenes_file))
-	// 	error_exit(MAP_ERR);
-	fd = open (rtv->scenes_file, O_RDONLY);
+	fd = open(rtv->scenes_file, O_RDONLY);
 	printf("fd:\t%d\n", fd);
 	printf("file_name:\t%s\n", rtv->scenes_file);
 	while (get_next_line(fd, &object))
 	{
 		if (*object != EMPTY_LINE)
-		{
-			//printf("%s\n", object);
 			get_object(object, rtv);
-		}
-
 		free(object);
 	}
+	close(fd);
 	return (1);
 }
 
-int				check_map_format(char *file_name)
+int			check_map_format(char *file_name)
 {
 	char	**split;
 	int		idx;
@@ -63,7 +58,7 @@ int				check_map_format(char *file_name)
 	return (1);
 }
 
-void	get_object(char *object, t_rtv *rtv)
+void		get_object(char *object, t_rtv *rtv)
 {
 	t_sphere	*new_sphere;
 	t_sphere	*old_sphere;
@@ -82,14 +77,14 @@ void	get_object(char *object, t_rtv *rtv)
 	{
 		old_light = rtv->lights;
 		new_light = create_light(object);
-		rtv->lights = new_light;		
+		rtv->lights = new_light;
 		new_light->next = old_light;
 	}
 	else if (get_abstract_obj_type(object) == CAMERA)
 		rtv->calc.or = get_cam_pos(object);
 }
 
-void	nullify_object(t_sphere *obj)
+void		nullify_object(t_sphere *obj)
 {
 	obj->center = (t_vec_d) {0, 0, 0};
 	obj->radius = 1;
@@ -100,7 +95,7 @@ void	nullify_object(t_sphere *obj)
 	obj->next = NULL;
 }
 
-void	nullify_light(t_light *light)
+void		nullify_light(t_light *light)
 {
 	light->intensity = 0;
 	light->pos = (t_vec_d) {0, 0, 0};
@@ -127,16 +122,15 @@ t_sphere	*get_sphere(char *obj)
 	sphere->fig_angle = get_next_num(&obj);
 	return (sphere);
 }
- 
-t_light	*create_light(char *obj)
+
+t_light		*create_light(char *obj)
 {
 	t_light		*light;
 
-	if(!(light = (t_light*)ft_memalloc(sizeof(t_light))))
+	if (!(light = (t_light*)ft_memalloc(sizeof(t_light))))
 		error_exit(MEM_ERR);
 	nullify_light(light);
 	light->type = get_obj_type(obj);
-	
 	shift_obj_type(&obj);
 	light->intensity = get_next_num(&obj);
 	light->pos = get_next_vec(&obj);
@@ -149,8 +143,6 @@ t_vec_d		get_cam_pos(char *obj)
 	static	t_vec_d		vec;
 
 	vec = get_next_vec(&obj);
-	// if (vec.x == 0 && vec.y == 0 && vec.x == 0)
-	// vec = get_vector(0, 1, 0);
 	return (vec);
 }
 
@@ -164,11 +156,10 @@ t_vec_d		get_vector(int x, int y, int z)
 	return (vec);
 }
 
-
 t_vec_d		get_next_vec(char **fig)
 {
 	t_vec_d		num;
-	
+
 	// num = get_vector(1, 1, 1);
 	// if (!**fig)
 	// 	return (num);
@@ -186,12 +177,11 @@ t_vec_d		get_next_vec(char **fig)
 	++(*fig);
 	return (num);
 }
+
 double		get_next_num(char **fig)
 {
 	double	num;
 
-	// if (!**fig)
-	// 	return ;
 	num = ft_atof(*fig);
 	while (**fig != ';' && **fig)
 		++(*fig);
@@ -216,7 +206,7 @@ int			get_abstract_obj_type(char *obj)
 	return (abstract_type);
 }
 
-int		shift_obj_type(char **fig)
+int			shift_obj_type(char **fig)
 {
 	while (**fig != ';' && **fig)
 		++(*fig);
