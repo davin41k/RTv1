@@ -33,6 +33,13 @@ COR_C		:=	$(DIR_SRC)draw_three.c\
 				$(DIR_SRC)scene_reader.c\
 				$(DIR_SRC)help_func.c\
 				$(DIR_SRC)init_functions.c\
+				$(DIR_SRC)intersec_basic.c\
+				$(DIR_SRC)intersec_ray_cylin_and_cone.c\
+				$(DIR_SRC)draw_one.c\
+				$(DIR_SRC)main.c\
+				$(DIR_SRC)scene_reader_two.c\
+				$(DIR_SRC)scene_reader_three.c\
+				$(DIR_SRC)camera_movement.c\
 # $(DIR_SRC)init_functions.c\
 # $(DIR_SRC)exits_func.c 
 

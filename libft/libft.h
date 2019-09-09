@@ -95,5 +95,4 @@ int					ft_getnbr(char *str);
 void				clean_text(char **splitted);
 double				ft_atof(char *nptr);
 
-
 #endif

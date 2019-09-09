@@ -80,113 +80,9 @@ void		get_object(char *object, t_rtv *rtv)
 		rtv->lights = new_light;
 		new_light->next = old_light;
 	}
-	else if (get_abstract_obj_type(object) == CAMERA)
+	else if (get_abstract_obj_type(object) == CAMERA) {
 		rtv->calc.or = get_cam_pos(object);
-}
-
-void		nullify_object(t_sphere *obj)
-{
-	obj->center = (t_vec_d) {0, 0, 0};
-	obj->radius = 1;
-	obj->color = (t_vec_d) {200, 200, 200};
-	obj->rotation = (t_vec_d) {0, 0, 0};
-	obj->specular = 0;
-	obj->fig_angle = 0;
-	obj->next = NULL;
-}
-
-void		nullify_light(t_light *light)
-{
-	light->intensity = 0;
-	light->pos = (t_vec_d) {0, 0, 0};
-	light->dir = (t_vec_d) {0, 0, 0};
-	light->next = NULL;
-}
-
-t_sphere	*get_sphere(char *obj)
-{
-	t_sphere	*sphere;
-	char		*save_str;
-
-	if (!(sphere = (t_sphere*)ft_memalloc(sizeof(t_sphere))))
-		error_exit(MEM_ERR);
-	save_str = obj;
-	nullify_object(sphere);
-	sphere->obj_type = get_obj_type(obj); //СМЕСТИТЬ!!!
-	shift_obj_type(&obj);
-	sphere->center = get_next_vec(&obj);
-	sphere->radius = get_next_num(&obj);
-	sphere->color = get_next_vec(&obj);
-	sphere->rotation = get_next_vec(&obj);
-	sphere->specular = (int)get_next_num(&obj);
-	sphere->fig_angle = get_next_num(&obj);
-	return (sphere);
-}
-
-t_light		*create_light(char *obj)
-{
-	t_light		*light;
-
-	if (!(light = (t_light*)ft_memalloc(sizeof(t_light))))
-		error_exit(MEM_ERR);
-	nullify_light(light);
-	light->type = get_obj_type(obj);
-	shift_obj_type(&obj);
-	light->intensity = get_next_num(&obj);
-	light->pos = get_next_vec(&obj);
-	light->dir = get_next_vec(&obj);
-	return (light);
-}
-
-t_vec_d		get_cam_pos(char *obj)
-{
-	static	t_vec_d		vec;
-
-	vec = get_next_vec(&obj);
-	return (vec);
-}
-
-t_vec_d		get_vector(int x, int y, int z)
-{
-	t_vec_d		vec;
-
-	vec.x = x;
-	vec.y = y;
-	vec.z = z;
-	return (vec);
-}
-
-t_vec_d		get_next_vec(char **fig)
-{
-	t_vec_d		num;
-
-	// num = get_vector(1, 1, 1);
-	// if (!**fig)
-	// 	return (num);
-	num.x = ft_atof(*fig);
-	while (**fig != ',' && **fig)
-		++(*fig);
-	++(*fig);
-	num.y = ft_atof(*fig);
-	while (**fig != ',' && **fig)
-		++(*fig);
-	++(*fig);
-	num.z = ft_atof(*fig);
-	while (**fig != ';' && **fig)
-		++(*fig);
-	++(*fig);
-	return (num);
-}
-
-double		get_next_num(char **fig)
-{
-	double	num;
-
-	num = ft_atof(*fig);
-	while (**fig != ';' && **fig)
-		++(*fig);
-	++(*fig);
-	return (num);
+		print_vec("O", rtv->calc.or);}
 }
 
 int			get_abstract_obj_type(char *obj)
@@ -204,14 +100,6 @@ int			get_abstract_obj_type(char *obj)
 	else
 		error_exit(SCENE_ERR);
 	return (abstract_type);
-}
-
-int			shift_obj_type(char **fig)
-{
-	while (**fig != ';' && **fig)
-		++(*fig);
-	++(*fig);
-	return (1);
 }
 
 int			get_obj_type(char *object)

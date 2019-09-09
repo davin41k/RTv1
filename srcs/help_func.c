@@ -13,9 +13,9 @@
 #include "../includes/rtv1.h"
 
 
-void	print_vec(char *state, t_vec_d vec)
+void	print_vec(char *vec_name, t_vec_d vec)
 {
-	printf("%s:\t->\t%f\t%f\t%f\n", state, vec.x, vec.y, vec.z);
+	printf("%s:\t->\t%f\t%f\t%f\n", vec_name, vec.x, vec.y, vec.z);
 }
 
 void	print_state(char *state, double value)

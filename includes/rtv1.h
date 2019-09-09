@@ -16,8 +16,8 @@
 
 # define WIN_FHD_HEIGHT 1080
 # define WIN_FHD_WIDTH	1080
-# define WIN_HD_HEIGHT	720
-# define WIN_HD_WIDTH	1280
+# define WIN_HD_HEIGHT	1000
+# define WIN_HD_WIDTH	1000
 
 # define GET_NUM		0
 # define INCREASE		1
@@ -34,7 +34,7 @@
 
 # define _USE_MATH_DEFINES
 
-# define INFINIT		1000000000
+# define INFINIT		90000000000
 # define EPSILON		0.000001
 # define START_CANVAS	1
 # define Vw				1
@@ -101,7 +101,7 @@ typedef	struct		s_graph
 	SDL_Texture		*texture;
 	SDL_Surface		*surface_window;
 	int				*pixs;
-	int				*pixels2;
+	t_vec_d			angle;
 }					t_graph;
 
 struct				s_sphere
@@ -233,12 +233,16 @@ t_vec_d		get_cam_pos(char *obj);
 //	***HELP_FUNC***
 void	print_object(t_sphere *sphere);
 void	print_state(char *state, double value);
-void	print_vec(char *state, t_vec_d vec);
+void	print_vec(char *vec_name, t_vec_d vec);
 void	print_light(t_light *light);
 void	print_all_objects(t_rtv *rtv);
 
-void    sdl_init(t_rtv *rtv, t_graph *graph);
 int		rtv_init(t_rtv *rtv, char *scene_file_name);
 
+//	***MAIN***
+
+int		interactive_elem(t_rtv *rtv);
+void	camera_rotate(t_rtv *rtv);
+void	change_angle(t_rtv *rtv);
 
 #endif

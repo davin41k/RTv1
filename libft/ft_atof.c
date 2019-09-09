@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static	char		*check_null_str(char *s, int c)
+static	char	*check_null_str(char *s, int c)
 {
 	char *s1;
 
@@ -34,9 +34,9 @@ static	char		*check_null_str(char *s, int c)
 	return (NULL);
 }
 
-static    int    find_zero(char **s)
+static	int		find_zero(char **s)
 {
-	int count_zero;
+	int		count_zero;
 
 	(*s)++;
 	count_zero = 0;
@@ -48,11 +48,11 @@ static    int    find_zero(char **s)
 	return (count_zero);
 }
 
-int			tester(char *nptr)
+int				tester(char *nptr)
 {
-	char    *str;
-	int        i;
-	int        d;
+	char		*str;
+	int			i;
+	int			d;
 
 	i = 0;
 	d = 1;
@@ -68,13 +68,13 @@ int			tester(char *nptr)
 	return (d);
 }
 
-double		ft_atof(char *nptr)
+double			ft_atof(char *nptr)
 {
-	double    mant;
-	char    *ch;
-	double    atf;
-	int        count_zero;
-	int        castul;
+	double		mant;
+	char		*ch;
+	double		atf;
+	int			count_zero;
+	int			castul;
 
 	castul = 1;
 	mant = (double)ft_atoi(nptr);
