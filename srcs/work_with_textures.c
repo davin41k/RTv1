@@ -48,7 +48,7 @@ void	load_texture(t_rtv *rtv, char *text_path)
 		// 	printf("c%d:\t%d\n", i, arr[i]);
 }
 
-int		get_texel(void *pixels, int idx)
+Uint32		get_texel(void *pixels, int idx)
 {
 	unsigned	char	*pix;
 	unsigned	int		red;
@@ -90,17 +90,11 @@ t_vec_d		texture_mapping(t_rtv *rtv, t_vec_d p)
 	Uint32		clr;
 	p -= rtv->calc.clost_spher->center;
 	p = normalize(p);
-	u = (0.5 + atan2(p.z, p.x) / (2.0 * M_PI)) * rtv->texture->w; //0 .. 1
-	v = rtv->texture->h - ((0.5 - asin(p.y) / M_PI) * rtv->texture->h); // 0 .. 1
-	// u *= (rtv->texture->w );
-	// v *= (rtv->texture->h);
-	//printf("u:\t%f\tv:\t%f\n", u, v);
-	// color = ((Uint32*)rtv->texture->pixels)[(int)(v * rtv->texture->w + u)]; //1024 * 680
-	
-	// clr = ((Uint32*)rtv->texture->pixels)[(u * rtv->texture->w + v)]; //1024 * 680
-	clr = (Uint32*)get_texel(rtv->texture->pixels, (u * rtv->texture->w + v) * 3); //1024 * 680
+	u = (0.5 + atan2(p.z, p.x) / (2.0 * M_PI)) * rtv->texture->w;
+	v = rtv->texture->h - ((0.5 - asin(p.y) / M_PI) * rtv->texture->h);
+	clr = get_texel(rtv->texture->pixels,
+	(u * rtv->texture->w + v) * 3);
 	color = color_to_vec(clr);
-	//printf("color:\t%d\t color:  %f   %f   %f\n", clr, color.x, color.y, color.z);
 	return ((t_vec_d)color);
 }
 
