@@ -93,13 +93,3 @@ void		check_correct_chanels(t_vec_d *color)
 	if (color->z > 255)
 		color->z = 255;
 }
-
-t_vec_d		multiplay(double coeff, t_vec_d vec)
-{
-	t_vec_d re;
-
-	re.x = vec.x * coeff;
-	re.y = vec.y * coeff;
-	re.z = vec.z * coeff;
-	return (re);
-}

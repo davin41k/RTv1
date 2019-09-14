@@ -64,9 +64,6 @@ t_vec_d		calc_normal(t_rtv *rtv, int fig_type)
 		normal = multiplay(1.0 / length(normal), normal);
 	}
 	else if (fig_type == PLANE)
-	// {	
-	// 	normal = multiplay(1.0 / length(rtv->calc.clost_spher->rotation), rtv->calc.clost_spher->rotation);
-	// }
 		normal = (dot(rtv->calc.dir, rtv->calc.clost_spher->rotation) < 0.0 ?
 		-rtv->calc.clost_spher->rotation : rtv->calc.clost_spher->rotation);
 	else if (fig_type == CYLINDER || fig_type == CONE)
@@ -107,7 +104,8 @@ t_vec_d		intersec_ray_plane(t_vec_d ori, t_vec_d dir, t_sphere *plane)
 	normalize = (1.0 / length(plane->rotation)) * plane->rotation;
 	if (dot(dir, normalize) < EPSILON)
 	{
-		normalize = (t_vec_d){normalize.x * m1, normalize.y * m1, normalize.z * m1};
+		normalize = (t_vec_d){normalize.x * m1,
+		normalize.y * m1, normalize.z * m1};
 		if (dot(dir, normalize) < EPSILON)
 		{
 			t.x = INFINIT;

@@ -42,7 +42,12 @@ t_vec_d		ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere)
 	return (x);
 }
 
-int		do_ray_trace(t_calc cl, t_rtv *rtv)
+t_vec_d		normalize(t_vec_d vec)
+{
+	return ( multiplay(1.0 / length(vec), vec));
+}
+
+int			do_ray_trace(t_calc cl, t_rtv *rtv)
 {
 	t_light		*light;
 	t_sphere	*head;
@@ -62,8 +67,12 @@ int		do_ray_trace(t_calc cl, t_rtv *rtv)
 	normal = calc_normal(rtv, rtv->calc.clost_spher->obj_type);
 	rtv->calc.norml = normal;
 	rtv->calc.dir *= -1;
+	rtv->calc.color = rtv->calc.clost_spher->color;
+	rtv->calc.color = texture_mapping(rtv, point);
+	// rtv->calc.color = procedural_texturing(rtv->calc.point, rtv->lights, rtv->calc);
+	//printf(rtv->calc->color);
 	rtv->calc.color = calc_lightning(rtv, point,
-	rtv->calc.clost_spher->specular) * rtv->calc.clost_spher->color;
+	rtv->calc.clost_spher->specular) * rtv->calc.color; // умножалось на цвет сферы
 	check_correct_chanels(&rtv->calc.color);
 	return (((int)(rtv->calc.color.x) << 16) | ((int)(rtv->calc.color.y)
 	<< 8 | (int)(rtv->calc.color.z)));

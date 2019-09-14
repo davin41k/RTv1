@@ -31,7 +31,6 @@ COR_C		:=	$(DIR_SRC)draw_three.c\
 				$(DIR_SRC)exits_func.c\
 				$(DIR_SRC)figure_factory.c\
 				$(DIR_SRC)scene_reader.c\
-				$(DIR_SRC)help_func.c\
 				$(DIR_SRC)init_functions.c\
 				$(DIR_SRC)intersec_basic.c\
 				$(DIR_SRC)intersec_ray_cylin_and_cone.c\
@@ -40,8 +39,7 @@ COR_C		:=	$(DIR_SRC)draw_three.c\
 				$(DIR_SRC)scene_reader_two.c\
 				$(DIR_SRC)scene_reader_three.c\
 				$(DIR_SRC)camera_movement.c\
-# $(DIR_SRC)init_functions.c\
-# $(DIR_SRC)exits_func.c 
+				$(DIR_SRC)work_with_textures.c\
 
 #-------------------------- Init OBJ, INC ------------------------------------
 OBJ			:=	$(patsubst $(DIR_SRC)%,$(DIR_OBJ)%,\

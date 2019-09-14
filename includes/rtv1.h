@@ -16,13 +16,16 @@
 
 # define WIN_FHD_HEIGHT 1080
 # define WIN_FHD_WIDTH	1080
-# define WIN_HD_HEIGHT	1000
-# define WIN_HD_WIDTH	1000
+# define WIN_HD_HEIGHT	1080
+# define WIN_HD_WIDTH	1080
 
 # define GET_NUM		0
 # define INCREASE		1
 # define ON				1
 # define OFF			0
+# define TEXTURE_PASS	
+
+# define TEXTURES_COUNT	1
 
 # define USAGE			0
 # define THREAD_ERR		1
@@ -31,17 +34,15 @@
 # define INCORRECT_MAP	4
 # define COLOR_ERR		5
 # define FORMAT_ERR		6
+# define LOAD_ERR		7
 
 # define _USE_MATH_DEFINES
 
-# define INFINIT		90000000000
+# define PI				3.141592653589793
+# define INFINIT		1000000000
 # define EPSILON		0.000001
 # define START_CANVAS	1
-# define Vw				1
-# define Vh				1
 
-# define W				1000
-# define H				1000
 # define BG_COLOR		0xFFCACB
 
 # define AMBIENT		4
@@ -76,24 +77,22 @@
 # include <float.h>
 # include "libft.h"
 # include "get_next_line.h"
-//DBL_MAX
 # include "SDL.h"
 
+typedef double	t_vec_d __attribute__((__ext_vector_type__(3)));
+typedef int	t_vec_i __attribute__((__ext_vector_type__(3)));
 
-typedef	double	t_vec_d	__attribute__((__ext_vector_type__(3)));
-typedef	int		t_vec_i	__attribute__((__ext_vector_type__(3)));
+typedef	struct s_sphere	t_sphere;
+typedef	struct s_light	t_light;
 
-typedef	struct		s_sphere	t_sphere;
-typedef	struct		s_light		t_light;
-
-typedef	struct		s_point 
+typedef struct		s_point
 {
 	int				x;
 	int				y;
 	int				z;
 }					t_point;
 
-typedef	struct		s_graph
+typedef struct		s_graph
 {
 	SDL_Window		*win;
 	SDL_Renderer	*render;
@@ -114,23 +113,23 @@ struct				s_sphere
 	int				specular;
 	double			fig_angle;
 	t_sphere		*next;
-};		
+};
 
 typedef	struct		s_scene
 {
-	t_vec_d			O;
-	t_vec_d			D;
+	t_vec_d			ori;
+	t_vec_d			dir;
 	t_vec_d			cam_ray;
 }					t_scene;
 
-typedef	struct		s_light
+struct				s_light
 {
 	int				type;
 	double			intensity;
 	t_vec_d			pos;
 	t_vec_d			dir;
 	t_light			*next;
-}					t_light;
+};
 
 typedef	struct		s_calc
 {
@@ -162,87 +161,77 @@ typedef	struct		s_rtv
 {
 	int				scr_h;
 	int				scr_w;
+	SDL_Surface		*texture;
 	t_sphere		*spheres;
 	t_calc			calc;
 	t_scene			scene;
 	char			*scenes_file;
 	t_graph			*graph;
 	t_light			*lights;
+	int				textures[TEXTURES_COUNT];
 }					t_rtv;
 
-//	***EXITS_FUNC***
-int		escape_exit(int key);
-int		red_exit(int key);
-void	read_error(void);
-void	error_exit(int errno);
+int					escape_exit(int key);
+int					red_exit(int key);
+void				read_error(void);
+void				error_exit(int errno);
+void				sdl_init(t_rtv *rtv, t_graph *graph);
+int					rtv_init(t_rtv *rtv, char *scenes_file);
+double				dot(t_vec_d v1, t_vec_d v2);
+void				init_sdl(t_graph *sdl);
+void				set_pixel(t_graph *img, int x, int y, int color);
+t_vec_d				get_screen_coord(int x, int y);
+t_vec_d				ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere);
+int					do_ray_trace(t_calc cl, t_rtv *rtv);
+void				main_cycle(t_rtv *rtv);
+int					main(int ac, char **av);
+t_vec_d				new_cam_pos(int x, int y, int z);
+double				calc_lightning(t_rtv *rtv, t_vec_d p, int spec);
+t_vec_d				multiplay(double k, t_vec_d vec);
+double				length(t_vec_d vec);
+void				check_correct_chanels(t_vec_d *color);
+t_light				*get_light(int type, double intensity,
+t_vec_d pos, t_vec_d dir);
+t_light				*get_lights(void);
+t_sphere			*create_sphere(t_vec_d center,
+double radius, t_vec_d color, int spec);
+t_sphere			*get_spheres(void);
+t_calc				to_calc(t_vec_d or, t_vec_d dir,
+double t_min, double t_max);
+int					clos_intersection(t_calc c, t_calc *calc, t_rtv *rtv);
+void				calc_init(t_vec_d or, t_vec_d dir, t_calc *calc);
+t_vec_d				intersec_object(t_vec_d or, t_vec_d dir, t_sphere *obj);
+t_vec_d				intersec_ray_plane(t_vec_d or,
+t_vec_d dir, t_sphere *plane);
+t_vec_d				intersec_ray_cylinder(t_vec_d or,
+t_vec_d dir, t_sphere *cone);
+t_vec_d				calc_normal(t_rtv *rtv, int fig_type);
+t_vec_d				intersec_ray_cone(t_vec_d or, t_vec_d dir, t_sphere *cone);
+int					read_scene(t_rtv *rtv);
+t_sphere			*get_sphere(char *obj);
+int					get_obj_type(char *object);
+t_vec_d				get_next_vec(char **fig);
+double				get_next_num(char **fig);
+t_light				*create_light(char *obj);
+int					check_map_format(char *file_name);
+void				get_object(char *object, t_rtv *rtv);
+void				nullify_object(t_sphere *obj);
+void				nullify_light(t_light *light);
+t_vec_d				get_next_vec(char **fig);
+double				get_next_num(char **fig);
+int					get_abstract_obj_type(char *obj);
+int					shift_obj_type(char **fig);
+t_vec_d				get_cam_pos(char *obj);
+int					rtv_init(t_rtv *rtv, char *scene_file_name);
+int					interactive_elem(t_rtv *rtv);
+void				camera_rotate(t_rtv *rtv);
+void				change_angle(t_rtv *rtv);
 
-//	***INIT_FUNCTIONS***
-void    sdl_init(t_rtv *rtv, t_graph *graph);
-int		rtv_init(t_rtv *rtv, char *scenes_file);
 
-//	***DRAW_FUNC_TWO***
-double	dot(t_vec_d v1, t_vec_d v2);
-void	init_sdl(t_graph *sdl);
-void	set_pixel(t_graph *img, int x, int y, int color);
-t_vec_d	get_screen_coord(int x, int y);
-t_vec_d	ray_hit_sphere(t_vec_d or, t_vec_d dir, t_sphere *sphere);
-int		do_ray_trace(t_calc cl, t_rtv *rtv);
-void	main_cycle(t_rtv *rtv);
-int		main(int ac, char **av);
-t_vec_d		new_cam_pos(int x, int y, int z);
-
-//	***LUGHTNING***
-double	calc_lightning(t_rtv *rtv, t_vec_d p, int spec);
-t_vec_d	multiplay(double k, t_vec_d vec);
-double length(t_vec_d vec);
-void	check_correct_chanels(t_vec_d *color);
-
-//	***FIGURE_FACTORY***
-t_light		*get_light(int type, double intensity, t_vec_d pos, t_vec_d dir);
-t_light		*get_lights(void);
-t_sphere	*create_sphere(t_vec_d center, double radius, t_vec_d color, int spec);
-t_sphere	*get_spheres(void);
-
-//	***MORE_DRAW_FUNC***
-t_calc		to_calc(t_vec_d or, t_vec_d dir, double t_min, double t_max);
-int			clos_intersection(t_calc c, t_calc *calc, t_rtv *rtv);
-void		calc_init(t_vec_d or, t_vec_d dir, t_calc *calc);
-t_vec_d		intersec_object(t_vec_d or, t_vec_d dir, t_sphere *obj);
-t_vec_d		intersec_ray_plane(t_vec_d or, t_vec_d dir, t_sphere *plane);
-t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d dir, t_sphere *cone);
-t_vec_d		calc_normal(t_rtv *rtv, int fig_type);
-t_vec_d		intersec_ray_cone(t_vec_d or, t_vec_d dir, t_sphere *cone);
-
-//	***SCENE_READER***
-int			read_scene(t_rtv *rtv);
-t_sphere	*get_sphere(char *obj);
-int			get_obj_type(char *object);
-t_vec_d		get_next_vec(char **fig);
-double		get_next_num(char **fig);
-t_light		*create_light(char *obj);
-int			check_map_format(char *file_name);
-void		get_object(char *object, t_rtv *rtv);
-void		nullify_object(t_sphere *obj);
-void		nullify_light(t_light *light);
-t_vec_d		get_next_vec(char **fig);
-double		get_next_num(char **fig);
-int			get_abstract_obj_type(char *obj);
-int			shift_obj_type(char **fig);
-t_vec_d		get_cam_pos(char *obj);
-
-//	***HELP_FUNC***
-void	print_object(t_sphere *sphere);
-void	print_state(char *state, double value);
-void	print_vec(char *vec_name, t_vec_d vec);
-void	print_light(t_light *light);
-void	print_all_objects(t_rtv *rtv);
-
-int		rtv_init(t_rtv *rtv, char *scene_file_name);
-
-//	***MAIN***
-
-int		interactive_elem(t_rtv *rtv);
-void	camera_rotate(t_rtv *rtv);
-void	change_angle(t_rtv *rtv);
+void				load_texture(t_rtv *rtv, char *text_path);
+t_vec_d				texture_mapping(t_rtv *rtv, t_vec_d p);
+t_vec_d		procedural_texturing(t_vec_d point, t_light *lights, t_calc calc);
+t_vec_d		normalize(t_vec_d vec)
+;
 
 #endif

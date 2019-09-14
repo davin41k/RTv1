@@ -91,3 +91,13 @@ t_vec_d		intersec_ray_cylinder(t_vec_d or, t_vec_d dir, t_sphere *cone)
 	t.y = (-coef.y - sqrt(discriminant)) / (2 * coef.x);
 	return (t);
 }
+
+t_vec_d		multiplay(double coeff, t_vec_d vec)
+{
+	t_vec_d re;
+
+	re.x = vec.x * coeff;
+	re.y = vec.y * coeff;
+	re.z = vec.z * coeff;
+	return (re);
+}

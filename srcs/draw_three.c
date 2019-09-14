@@ -35,9 +35,7 @@ t_vec_d		get_screen_coord(int x, int y)
 	return (d);
 }
 
-
-
-void	main_cycle(t_rtv *rtv)
+void		main_cycle(t_rtv *rtv)
 {
 	int			y;
 	int			x;
@@ -55,8 +53,9 @@ void	main_cycle(t_rtv *rtv)
 			dir = get_screen_coord(x, y);
 			rtv->calc.dir = dir;
 			camera_rotate(rtv);
-			rtv->calc.dir /= 1.0 / length(rtv->calc.dir); 
-			color = do_ray_trace(to_calc(rtv->calc.or, rtv->calc.dir, 1, INFINIT), rtv);
+			rtv->calc.dir /= 1.0 / length(rtv->calc.dir);
+			color = do_ray_trace(to_calc(rtv->calc.or,
+			rtv->calc.dir, 1, INFINIT), rtv);
 			set_pixel(rtv->graph, x, y, color);
 		}
 	}
@@ -83,22 +82,6 @@ int			interactive_elem(t_rtv *rtv)
 	return (0);
 }
 
-// int		new_cam_pos(t_vec_d cam_rot, t_vec_d)
-// {
-// 	t_vec_d		new_pos;
-// 	int			i;
-// 	int			j;
-
-// 	new_pos = (t_vec_d){0, 0, 0};
-// 	i = -1;
-// 	j = -1;
-// 	while (++i < 3)
-// 	{
-// 		while (++j < 3)
-// 		new_cam_pos[i]
-// 	}
-// }
-
 t_vec_d		new_cam_pos(int x, int y, int z)
 {
 	t_vec_d		new_pos;
@@ -110,5 +93,3 @@ t_vec_d		new_cam_pos(int x, int y, int z)
 	new_pos.z = z;
 	return (new_pos);
 }
-
-

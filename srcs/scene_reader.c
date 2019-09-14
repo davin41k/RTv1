@@ -18,14 +18,13 @@ int			read_scene(t_rtv *rtv)
 	char	*object;
 
 	fd = open(rtv->scenes_file, O_RDONLY);
-	printf("fd:\t%d\n", fd);
-	printf("file_name:\t%s\n", rtv->scenes_file);
 	while (get_next_line(fd, &object))
 	{
 		if (*object != EMPTY_LINE)
 			get_object(object, rtv);
 		free(object);
 	}
+	free(object);
 	close(fd);
 	return (1);
 }
@@ -80,9 +79,8 @@ void		get_object(char *object, t_rtv *rtv)
 		rtv->lights = new_light;
 		new_light->next = old_light;
 	}
-	else if (get_abstract_obj_type(object) == CAMERA) {
+	else if (get_abstract_obj_type(object) == CAMERA)
 		rtv->calc.or = get_cam_pos(object);
-		print_vec("O", rtv->calc.or);}
 }
 
 int			get_abstract_obj_type(char *obj)

@@ -40,7 +40,7 @@ t_light		*get_lights(void)
 	return (light1);
 }
 
-t_sphere		*create_sphere(t_vec_d center, double radius,
+t_sphere	*create_sphere(t_vec_d center, double radius,
 t_vec_d color, int spec)
 {
 	t_sphere	*sphere;
@@ -55,7 +55,7 @@ t_vec_d color, int spec)
 	return (sphere);
 }
 
-t_sphere		*get_spheres(void)
+t_sphere	*get_spheres(void)
 {
 	t_sphere	*s1;
 	t_sphere	*s2;
@@ -63,9 +63,10 @@ t_sphere		*get_spheres(void)
 	t_sphere	*s4;
 	t_sphere	*p1;
 
-	s1 = create_sphere((t_vec_d){-1, 2, 7}, 0.5, (t_vec_d){150, 150, 1}, 500); //желтая
-	s2 = create_sphere((t_vec_d){3, 0, 4}, 1, (t_vec_d){30, 150, 30}, 10); //зеленая
-	s4 = create_sphere((t_vec_d){0, -5001, 7}, 5000, (t_vec_d){255, 255, 0}, 10);
+	s1 = create_sphere((t_vec_d){-1, 2, 7}, 0.5, (t_vec_d){150, 150, 1}, 500);
+	s2 = create_sphere((t_vec_d){3, 0, 4}, 1, (t_vec_d){30, 150, 30}, 10);
+	s4 = create_sphere((t_vec_d){0, -5001, 7},
+	5000, (t_vec_d){255, 255, 0}, 10);
 	p1 = create_sphere((t_vec_d){1, 0, 5}, 1, (t_vec_d){10, 200, 200}, 1000);
 	p1->obj_type = CONE;
 	p1->rotation = (t_vec_d){1, 12, 0};

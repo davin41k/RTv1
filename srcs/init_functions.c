@@ -22,10 +22,9 @@ void	sdl_init(t_rtv *rtv, t_graph *graph)
 		error_exit(MEM_ERR);
 	graph->texture = SDL_CreateTexture(graph->render,
 	SDL_PIXELFORMAT_ARGB8888,
-	SDL_TEXTUREACCESS_STREAMING, H, W);
+	SDL_TEXTUREACCESS_STREAMING, rtv->scr_h, rtv->scr_w);
 	graph->surface_window = SDL_GetWindowSurface(graph->win);
 	graph->pixs = graph->surface_window->pixels;
-
 	if (!(graph->surface_window = SDL_GetWindowSurface(graph->win)))
 		error_exit(MEM_ERR);
 	graph->pixs = graph->surface_window->pixels;
@@ -42,6 +41,7 @@ int		rtv_init(t_rtv *rtv, char *scene_file_name)
 	rtv->scenes_file = scene_file_name;
 	rtv->lights = NULL;
 	rtv->spheres = NULL;
-	rtv->graph  = (t_graph*)ft_memalloc(sizeof(t_graph));
+	rtv->graph = (t_graph*)ft_memalloc(sizeof(t_graph));
+	load_texture(rtv, "./textures/jupiter.bmp");
 	return (1);
 }
