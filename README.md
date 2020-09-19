@@ -7,3 +7,6 @@ The program accepts a file with a specified scene at the input.
 The camera angle in the scene can be changed.
 
 The project was written according to the C code standard.
+The program has been tested on Mac OS.
+
+![RTV screenshot](https://github.com/davin41k/ImageStock/blob/master/images/Spheres.png)
