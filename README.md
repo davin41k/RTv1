@@ -9,4 +9,4 @@ The camera angle in the scene can be changed.
 The project was written according to the C code standard.
 The program has been tested on Mac OS.
 
-![RTV screenshot](https://github.com/davin41k/ImageStock/blob/master/images/Spheres.png)
+![RTV screenshot](https://github.com/davin41k/RTv1/blob/master/Screenshots/Spheres.png)
